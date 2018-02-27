@@ -1,5 +1,3 @@
-using System;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,12 +8,23 @@ namespace senai.twitter.domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Nome { get; set; }
-        public DateTime DataNascimento { get; set; }
-        public string Localidade { get; set; }
-        public string Bio { get; set; }
-        public string AvatarUrl { get; set; }
+
+        [Required]
+        [StringLength(50, MinimumLength=3, ErrorMessage="O campo nome de usuario deve ter no minimo 3 caracteres e no maximo 50.")]
+        public string NomeUsuario { get; set; }
         
+        [Required]
+        [StringLength(50)]
+        [EmailAddress]
+        public string Email { get; set; }
+        
+        [Required]
+        [StringLength(50, MinimumLength=8, ErrorMessage="A senha deve ter no minimo 8 caracteres.")]
+        [DataType(DataType.Password)]
+        public string Senha { get; set; }
+
+
+        [ForeignKey("PerfilId")]
         public Perfil Perfil { get; set; }
         
         public Login()
@@ -23,13 +32,11 @@ namespace senai.twitter.domain.Entities
             
         }
 
-        public Login(string Nome, DateTime DataNascimento, string Localidade, string Bio, string AvatarUrl)
+        public Login(string NomeUsuario, string Email, string Senha)
         {
-          this.Nome = Nome;
-          this.DataNascimento = DataNascimento;
-          this.Localidade = Localidade;
-          this.Bio = Bio;
-          this.AvatarUrl = AvatarUrl;  
+            this.NomeUsuario = NomeUsuario;
+            this.Email = Email;
+            this.Senha = Senha;
         }
     }
 }

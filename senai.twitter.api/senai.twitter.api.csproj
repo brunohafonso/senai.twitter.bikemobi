@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-  </PropertyGroup>
+<PropertyGroup>
+   <TargetFramework>netcoreapp2.0</TargetFramework>
+   <RuntimeFrameworkVersion>2.0.5</RuntimeFrameworkVersion>
+</PropertyGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
@@ -10,6 +11,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+  </ItemGroup>
+
+   <ItemGroup>
+    <ProjectReference Include="..\senai.twitter.repository\senai.twitter.repository.csproj" />
+    <ProjectReference Include="..\senai.twitter.domain\senai.twitter.domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using senai.twitter.repository.Context;
 
 namespace senai.twitter.api
 {
@@ -14,7 +16,23 @@ namespace senai.twitter.api
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var ambiente = BuildWebHost(args);
+            using (var escopo = ambiente.Services.CreateScope())
+            {
+                var servico = escopo.ServiceProvider;
+                try
+                {
+                    var contexto = servico.GetRequiredService<BikeMobiContext>();
+                    IniciarBanco.Inicializar(contexto);
+                }
+                catch (Exception e)
+                {
+                    var logger = servico.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(e, "Ocorreu um erro ao inserir dados.");
+                }
+            }
+
+            ambiente.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
