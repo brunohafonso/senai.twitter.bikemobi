@@ -23,8 +23,6 @@ namespace senai.twitter.domain.Entities
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 
-
-        [ForeignKey("PerfilId")]
         public Perfil Perfil { get; set; }
         
         public Login()

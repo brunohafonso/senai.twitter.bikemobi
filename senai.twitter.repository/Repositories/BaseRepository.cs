@@ -30,7 +30,6 @@ namespace senai.twitter.repository.Repositories {
 
         public int Atualizar (T dados) {
             try {
-
                 _context.Set<T> ().Update (dados);
                 return _context.SaveChanges ();
 
@@ -59,12 +58,10 @@ namespace senai.twitter.repository.Repositories {
             } catch (System.Exception ex) {
                 throw new Exception (ex.Message);
             }
-
         }
 
         public int Inserir (T dados) {
             try {
-
                 _context.Set<T> ().Add (dados);
                 return _context.SaveChanges ();
 
