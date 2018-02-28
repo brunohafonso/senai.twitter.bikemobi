@@ -16,8 +16,9 @@ namespace senai.twitter.domain.Entities
         
         [Required]
         [DataType(DataType.Date)]
+        [Column(TypeName="Date")]
         public DateTime DataNascimento { get; set; }
-        
+
         [Required]
         [StringLength(50, MinimumLength=3, ErrorMessage="O campo nome deve ter no minimo 3 caracteres e no maximo 50.")]
         public string Localidade { get; set; }

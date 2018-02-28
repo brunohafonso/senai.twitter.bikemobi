@@ -15,7 +15,7 @@ namespace senai.twitter.domain.Entities
         
         [Required]
         [StringLength(50)]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage="Favor insira um email valido.")]
         public string Email { get; set; }
         
         [Required]
