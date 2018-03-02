@@ -46,10 +46,7 @@ namespace senai.twitter.api
             }
 
             app.UseMvc();
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+           
         }
     }
 }

@@ -7,12 +7,12 @@ namespace senai.twitter.domain.Contracts
         
         IEnumerable<T> Listar(string[] includes = null); 
 
-         int Atualizar(T dados);
+        int Atualizar(T dados);
 
-         int Inserir(T dados);
+        int Inserir(T dados);
 
-         int Deletar(T dados);
+        int Deletar(T dados);
 
-         T BuscarPorId(int id, string[] includes = null);
+        T BuscarPorId(int id, string[] includes = null);
     }
 }

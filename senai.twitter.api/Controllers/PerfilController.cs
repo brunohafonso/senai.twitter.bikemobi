@@ -1,14 +1,19 @@
+using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
+using senai.twitter.repository.Context;
 
 namespace senai.twitter.api.Controllers
 {
-    [Route("api/perfil")]
+    [Route("api/[controller]")]
     public class PerfilController : Controller
     {
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
+
+    
 
         public PerfilController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository)
         {
@@ -17,10 +22,15 @@ namespace senai.twitter.api.Controllers
         }
 
         [HttpGet]
-        [Route("todos")]
         public IActionResult Buscar()
         {
-            return Ok(_perfilRepository.Listar());
+            try {
+                 return Ok("_perfilRepository.Listar()");
+            } 
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao buscar dados. " + ex.Message);
+            }  
         }
 
         [HttpGet]
