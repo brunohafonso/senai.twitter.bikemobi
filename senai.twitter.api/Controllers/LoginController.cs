@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
@@ -35,15 +36,23 @@ namespace senai.twitter.api.Controllers
         //         return NotFound();
         // }
 
-        [Route("cadastrar")]
+       [Route("cadastrar")]
         [HttpPost]
         public IActionResult Cadastrar([FromBody] Login login)
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
             
-            _loginRepository.Inserir(login);
-            return Ok($"Usuário {login.NomeUsuario} Cadastrado Com Sucesso.");
+            try 
+            {
+                _loginRepository.Inserir(login);
+                return Ok($"Usuário {login.NomeUsuario} Cadastrado Com Sucesso.");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao cadastrar dados. " + ex.Message);
+            }
+            
         }
         
         [Route("atualizar")]
@@ -53,7 +62,15 @@ namespace senai.twitter.api.Controllers
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_loginRepository.Atualizar(login));
+            try
+            {
+                _loginRepository.Atualizar(login);
+                return Ok($"Usuário {login.NomeUsuario} Atualizado Com Sucesso.");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao atualizar dados. " + ex.Message);
+            }
         }
 
         [Route("deletar")]
@@ -62,8 +79,16 @@ namespace senai.twitter.api.Controllers
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            return Ok(_loginRepository.Deletar(login));
+            
+            try
+            {
+                 _loginRepository.Deletar(login);
+                 return Ok($"Usuário {login.NomeUsuario} Deletado Com Sucesso.");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao deletar dados. " + ex.Message);
+            }
         }
     }
 }

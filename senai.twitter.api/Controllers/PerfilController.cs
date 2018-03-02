@@ -22,10 +22,11 @@ namespace senai.twitter.api.Controllers
         }
 
         [HttpGet]
+        [Route("todos")]
         public IActionResult Buscar()
         {
             try {
-                 return Ok("_perfilRepository.Listar()");
+                 return Ok(_perfilRepository.Listar());
             } 
             catch(Exception ex)
             {
@@ -37,11 +38,18 @@ namespace senai.twitter.api.Controllers
         [Route("buscarid/{Id}")]
         public IActionResult BuscarPorId(int Id)
         {
-            var perfil = _perfilRepository.BuscarPorId(Id);
-            if(perfil != null)
-                return Ok(perfil);
-            else
-                return NotFound();
+            try
+            {
+                var perfil = _perfilRepository.BuscarPorId(Id);
+                if(perfil != null)
+                    return Ok(perfil);
+                else
+                    return NotFound();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Errp ao buscar dados. " + ex.Message);
+            }
         }
 
         [HttpPut]
@@ -51,7 +59,16 @@ namespace senai.twitter.api.Controllers
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
             
-            return Ok(_perfilRepository.Atualizar(perfil));
+            try
+            {
+                 _perfilRepository.Atualizar(perfil);
+                 return Ok($"Usuário {perfil.Nome} Atualizado Com Sucesso.");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Erro ao atualizar os dados. " + ex.Message);
+            }
         }
     }
 }
