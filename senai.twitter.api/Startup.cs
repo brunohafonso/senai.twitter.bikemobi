@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Options;
 using senai.twitter.domain.Contracts;
 using senai.twitter.repository.Context;
 using senai.twitter.repository.Repositories;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace senai.twitter.api
 {
@@ -28,6 +30,22 @@ namespace senai.twitter.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new Info {
+                    Version = "V",
+                    Title = "BikeMobi API",
+                    Description = "Documentação de uso da BikeMobi API",
+                    TermsOfService = "None",
+                    Contact = new Contact{Name = "Bruno Afonso", Email = "brunohafonso@gmail.com", Url = "https://www.linkedin.com/in/bruno-henrique-afonso-6028a4149/"}
+                });
+
+                var basePath = AppContext.BaseDirectory;
+                var xmlPath = Path.Combine(basePath, "bikeMobiApi.xml");
+
+                c.IncludeXmlComments(xmlPath);
+            });
+            
+            
             services.AddDbContext<BikeMobiContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BikeMobiContext")));
             
             services.AddMvc().AddJsonOptions(options => {
@@ -46,10 +64,13 @@ namespace senai.twitter.api
             }
 
             app.UseMvc();
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
             });
+           
         }
     }
 }

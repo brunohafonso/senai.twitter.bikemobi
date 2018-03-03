@@ -15,7 +15,7 @@ namespace senai.twitter.domain.Entities
         
         [Required]
         [StringLength(50)]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage="Favor insira um email valido.")]
         public string Email { get; set; }
         
         [Required]
@@ -23,8 +23,6 @@ namespace senai.twitter.domain.Entities
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 
-
-        [ForeignKey("PerfilId")]
         public Perfil Perfil { get; set; }
         
         public Login()

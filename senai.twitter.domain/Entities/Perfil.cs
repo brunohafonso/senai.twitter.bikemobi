@@ -8,7 +8,7 @@ namespace senai.twitter.domain.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PerfilId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength=4, ErrorMessage="O campo nome deve ter no minimo 4 caracteres e no maximo 50.")]
@@ -16,8 +16,9 @@ namespace senai.twitter.domain.Entities
         
         [Required]
         [DataType(DataType.Date)]
+        [Column(TypeName="Date")]
         public DateTime DataNascimento { get; set; }
-        
+
         [Required]
         [StringLength(50, MinimumLength=3, ErrorMessage="O campo nome deve ter no minimo 3 caracteres e no maximo 50.")]
         public string Localidade { get; set; }
@@ -32,8 +33,10 @@ namespace senai.twitter.domain.Entities
         [DataType(DataType.DateTime)]
         public DateTime DataCriacao { get; set; } 
         
-        
+        [ForeignKey("LoginId")]
         public Login Login { get; set; }
+
+        public int LoginId { get; set; }
         
         public Perfil()
         {

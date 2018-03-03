@@ -15,10 +15,12 @@ namespace senai.twitter.api
             }
 
             var login = new Login("brunohafonso", "brunohafonso@gmail.com", "bbc259521");
-            _context.Logins.Add(login);
+            
 
             var perfil = new Perfil("Bruno Afonso", DateTime.Parse("25/04/1995"), "São Paulo", "sou ciclista com orgulho", "www.google.com.br", DateTime.Now);
-            _context.Perfis.Add(perfil);
+            login.Perfil = perfil;
+
+            _context.Logins.Add(login);
 
             _context.SaveChanges();
         }

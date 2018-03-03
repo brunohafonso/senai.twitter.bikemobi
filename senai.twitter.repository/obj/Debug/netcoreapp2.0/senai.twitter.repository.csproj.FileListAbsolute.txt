@@ -8,3 +8,13 @@ C:\Users\bruno\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug
 C:\Users\bruno\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.AssemblyInfo.cs
 C:\Users\bruno\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.dll
 C:\Users\bruno\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.pdb
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\bin\Debug\netcoreapp2.0\senai.twitter.repository.deps.json
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\bin\Debug\netcoreapp2.0\senai.twitter.repository.dll
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\bin\Debug\netcoreapp2.0\senai.twitter.repository.pdb
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\bin\Debug\netcoreapp2.0\senai.twitter.domain.dll
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\bin\Debug\netcoreapp2.0\senai.twitter.domain.pdb
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.csproj.CoreCompileInputs.cache
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.AssemblyInfoInputs.cache
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.AssemblyInfo.cs
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.dll
+C:\Users\44063076806\Desktop\senai.twitter.bikemobi\senai.twitter.repository\obj\Debug\netcoreapp2.0\senai.twitter.repository.pdb
