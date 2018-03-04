@@ -32,7 +32,7 @@ namespace senai.twitter.api
         {
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info {
-                    Version = "V",
+                    Version = "V1",
                     Title = "BikeMobi API",
                     Description = "Documentação de uso da BikeMobi API",
                     TermsOfService = "None",

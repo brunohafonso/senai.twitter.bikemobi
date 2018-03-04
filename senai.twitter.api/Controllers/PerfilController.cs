@@ -41,7 +41,7 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Efetua a atualização dos dados do Login juntamente com os dados básicos do perfil
         /// </summary>
-        /// <param name="Id">Id do perfil a ser buscad na base de dados</param>
+        /// <param name="Id">Id do perfil a ser buscado na base de dados</param>
         /// <returns>Objeto buscado caso exista algum registro com  Id persquisado</returns>
         [HttpGet]
         [Route("buscarid/{Id}")]
