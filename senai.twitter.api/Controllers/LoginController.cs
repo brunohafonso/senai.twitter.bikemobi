@@ -52,6 +52,14 @@ namespace senai.twitter.api.Controllers
             
             try 
             {
+                login.CriadoEm = DateTime.Now;
+                login.QtdAtualizacoes = 0;
+                login.AtualizadoPor = null;
+                
+                login.Perfil.CriadoEm = DateTime.Now;
+                login.Perfil.QtdAtualizacoes = 0;
+                login.Perfil.AtualizadoPor = null;
+
                 _loginRepository.Inserir(login);
                 return Ok($"Usuário {login.NomeUsuario} Cadastrado Com Sucesso.");
             }
@@ -76,6 +84,9 @@ namespace senai.twitter.api.Controllers
 
             try
             {
+                login.AtualizadoEm = DateTime.Now;
+                login.AtualizadoPor = login.NomeUsuario;
+                    
                 _loginRepository.Atualizar(login);
                 return Ok($"Usuário {login.NomeUsuario} Atualizado Com Sucesso.");
             }

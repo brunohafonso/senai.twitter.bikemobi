@@ -1,14 +1,11 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace senai.twitter.domain.Entities
 {
-    public class Login
+    public class Login : Base
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required]
         [StringLength(50, MinimumLength=3, ErrorMessage="O campo nome de usuario deve ter no minimo 3 caracteres e no maximo 50.")]
         public string NomeUsuario { get; set; }
@@ -35,6 +32,9 @@ namespace senai.twitter.domain.Entities
             this.NomeUsuario = NomeUsuario;
             this.Email = Email;
             this.Senha = Senha;
+            this.CriadoEm = DateTime.Now;
+            this.QtdAtualizacoes = 0;
+            this.AtualizadoPor = null;
         }
     }
 }

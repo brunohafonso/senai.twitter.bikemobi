@@ -75,9 +75,11 @@ namespace senai.twitter.api.Controllers
             
             try
             {
-                 _perfilRepository.Atualizar(perfil);
-                 return Ok($"Usuário {perfil.Nome} Atualizado Com Sucesso.");
-
+                perfil.AtualizadoEm = DateTime.Now;
+                perfil.AtualizadoPor = perfil.Nome;
+                    
+                _perfilRepository.Atualizar(perfil);
+                return Ok($"Usuário {perfil.Nome} Atualizado Com Sucesso.");
             }
             catch (Exception ex)
             {
