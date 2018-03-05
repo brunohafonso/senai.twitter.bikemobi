@@ -76,6 +76,7 @@ namespace senai.twitter.api.Controllers
             try
             {
                 perfil.AtualizadoEm = DateTime.Now;
+                perfil.QtdAtualizacoes = perfil.QtdAtualizacoes + 1;
                 perfil.AtualizadoPor = perfil.Nome;
                     
                 _perfilRepository.Atualizar(perfil);

@@ -85,6 +85,7 @@ namespace senai.twitter.api.Controllers
             try
             {
                 login.AtualizadoEm = DateTime.Now;
+                login.QtdAtualizacoes = login.QtdAtualizacoes + 1;
                 login.AtualizadoPor = login.NomeUsuario;
                     
                 _loginRepository.Atualizar(login);
