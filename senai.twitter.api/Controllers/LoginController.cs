@@ -11,31 +11,34 @@ namespace senai.twitter.api.Controllers
     {
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
+        private IBaseRepository<RotaPesquisa> _rotaPesquisaRepository;
 
-        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository)
+        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisa> rotaPesquisaRepository)
         {
 
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
+            _rotaPesquisaRepository = rotaPesquisaRepository;
         }
 
-        // [HttpGet]
-        // public IActionResult Buscar()
-        // {
-        //     return Ok(_loginRepository.Listar(new string[]{"Perfil"}));
-        // }
+        [HttpGet]
+        public IActionResult Buscar()
+        {
+            var logins = _rotaPesquisaRepository.Listar();
+            return Ok(logins);
+        }
 
-        // [HttpGet("{id}")]
-        // public IActionResult BuscarPorId(int id)
-        // {
-        //     var login = _loginRepository.BuscarPorId(id);
-        //     var perfil = _perfilRepository.BuscarPorId(id);
-        //     login.Perfil = perfil;
-        //     if (login != null)
-        //         return Ok(login);
-        //     else
-        //         return NotFound();
-        // }
+        [HttpGet("{id}")]
+        public IActionResult BuscarPorId(int id)
+        {
+            var login = _loginRepository.BuscarPorId(id);
+            var perfil = _perfilRepository.BuscarPorId(id);
+            login.Perfil = perfil;
+            if (login != null)
+                return Ok(login);
+            else
+                return NotFound();
+        }
 
 
         /// <summary>
