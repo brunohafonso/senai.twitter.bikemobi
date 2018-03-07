@@ -43,9 +43,9 @@ namespace senai.twitter.domain.Entities
             
         }
 
-        public RotaPesquisa(int Distancia, string Duracao, string DestinoEnd, double DestinoLat, double DestinoLng, string OrigemEnd, double OrigemLat, double OrigemLng, string PolylinePoints)
+        public RotaPesquisa(int IdLogin, int Distancia, string Duracao, string DestinoEnd, double DestinoLat, double DestinoLng, string OrigemEnd, double OrigemLat, double OrigemLng, string PolylinePoints)
         {
-            //this.IdLogin = IdLogin;
+            this.IdLogin = IdLogin;
             this.Distancia = Distancia;
             this.Duracao = Duracao;
             this.DestinoEnd = DestinoEnd;

@@ -13,18 +13,17 @@ namespace senai.twitter.api.Controllers
         private IBaseRepository<Perfil> _perfilRepository;
         private IBaseRepository<RotaPesquisa> _rotaPesquisaRepository;
 
-        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisa> rotaPesquisaRepository)
+        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository)
         {
 
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
-            _rotaPesquisaRepository = rotaPesquisaRepository;
         }
 
         [HttpGet]
         public IActionResult Buscar()
         {
-            var logins = _rotaPesquisaRepository.Listar();
+            var logins = _loginRepository.Listar(new string[]{"RotasPesquisas"});
             return Ok(logins);
         }
 
