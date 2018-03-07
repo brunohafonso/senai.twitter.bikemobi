@@ -38,8 +38,9 @@ namespace senai.twitter.domain.Entities
             
         }
 
-        public Perfil(string Nome, DateTime DataNascimento, string Estado, string Cidade, string Bio, string AvatarUrl)
+        public Perfil(int IdLogin, string Nome, DateTime DataNascimento, string Estado, string Cidade, string Bio, string AvatarUrl)
         {
+            this.IdLogin = IdLogin;
             this.Nome = Nome;
             this.DataNascimento = DataNascimento;
             this.Estado = Estado;

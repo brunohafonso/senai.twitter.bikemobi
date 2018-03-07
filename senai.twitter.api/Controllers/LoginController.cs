@@ -11,18 +11,21 @@ namespace senai.twitter.api.Controllers
     {
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
+        private IBaseRepository<RotaPesquisa> _rotaPesquisaRepository;
 
-        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository)
+        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisa> rotaPesquisaRepository)
         {
 
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
+            _rotaPesquisaRepository = rotaPesquisaRepository;
         }
 
         // [HttpGet]
         // public IActionResult Buscar()
         // {
-        //     return Ok(_loginRepository.Listar(new string[]{"Perfil"}));
+        //     var logins = _loginRepository.Listar(new string[]{"Perfil"});
+        //     return Ok(logins);
         // }
 
         // [HttpGet("{id}")]
@@ -85,6 +88,7 @@ namespace senai.twitter.api.Controllers
             try
             {
                 login.AtualizadoEm = DateTime.Now;
+                login.QtdAtualizacoes = login.QtdAtualizacoes + 1;
                 login.AtualizadoPor = login.NomeUsuario;
                     
                 _loginRepository.Atualizar(login);
@@ -96,27 +100,23 @@ namespace senai.twitter.api.Controllers
             }
         }
 
-        /// <summary>
-        /// Efetua a atualização dos dados do Login juntamente com os dados básicos do perfil
-        /// </summary>
-        /// <param name="login">Dados do login/perfil conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
-        /// <returns>String informando qual objeto foi deletado.</returns>
-        [Route("deletar")]
-        [HttpDelete]
-        public IActionResult Deletar([FromBody] Login login)
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+        
+        // [Route("deletar")]
+        // [HttpDelete]
+        // public IActionResult Deletar([FromBody] Login login)
+        // {
+        //     if(!ModelState.IsValid)
+        //         return BadRequest(ModelState);
             
-            try
-            {
-                 _loginRepository.Deletar(login);
-                 return Ok($"Usuário {login.NomeUsuario} Deletado Com Sucesso.");
-            }
-            catch(Exception ex)
-            {
-                return BadRequest("Erro ao deletar dados. " + ex.Message);
-            }
-        }
+        //     try
+        //     {
+        //          _loginRepository.Deletar(login);
+        //          return Ok($"Usuário {login.NomeUsuario} Deletado Com Sucesso.");
+        //     }
+        //     catch(Exception ex)
+        //     {
+        //         return BadRequest("Erro ao deletar dados. " + ex.Message);
+        //     }
+        // }
     }
 }

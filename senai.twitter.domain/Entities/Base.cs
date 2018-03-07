@@ -15,6 +15,7 @@ namespace senai.twitter.domain.Entities
         public DateTime CriadoEm { get; set; }
 
         [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd-mm-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime AtualizadoEm { get; set; }
 
         public int QtdAtualizacoes { get; set; }

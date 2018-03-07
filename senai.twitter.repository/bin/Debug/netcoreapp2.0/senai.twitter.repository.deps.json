@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "5fd8ef4d0cc4687aba9055302e8a59f6e5e9a77b"
+    "signature": "29273088bedf1fb453327c476ec597ce9d21b875"
   },
   "compilationOptions": {},
   "targets": {
@@ -16,6 +16,11 @@
         },
         "runtime": {
           "senai.twitter.repository.dll": {}
+        }
+      },
+      "EntityFramework/5.0.0": {
+        "runtime": {
+          "lib/net45/EntityFramework.dll": {}
         }
       },
       "Microsoft.CSharp/4.4.0": {},
@@ -206,6 +211,14 @@
       },
       "System.Collections.Immutable/1.4.0": {},
       "System.ComponentModel.Annotations/4.4.1": {},
+      "System.Data.Entity.Repository/2.0.0.1": {
+        "dependencies": {
+          "EntityFramework": "5.0.0"
+        },
+        "runtime": {
+          "lib/net45/System.Data.Entity.Repository.dll": {}
+        }
+      },
       "System.Data.SqlClient/4.4.0": {
         "dependencies": {
           "Microsoft.Win32.Registry": "4.4.0",
@@ -437,7 +450,8 @@
       },
       "senai.twitter.domain/1.0.0": {
         "dependencies": {
-          "System.ComponentModel.Annotations": "4.4.1"
+          "System.ComponentModel.Annotations": "4.4.1",
+          "System.Data.Entity.Repository": "2.0.0.1"
         },
         "runtime": {
           "senai.twitter.domain.dll": {}
@@ -450,6 +464,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "EntityFramework/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WYfgJWKg/RjwU8pzZkImD9DsV+J1nqDcIGp1S0/bdnElKBmAaUC2nmq/QQAcco32KyQQWnLgJNiDzIOz2xWFbQ==",
+      "path": "entityframework/5.0.0",
+      "hashPath": "entityframework.5.0.0.nupkg.sha512"
     },
     "Microsoft.CSharp/4.4.0": {
       "type": "package",
@@ -618,6 +639,13 @@
       "sha512": "sha512-ToiYqSCioqhtspq2O/jYKtyTC/T0uwWHBTYlzCi6PRbSSHArN1IaRWeHffDamvms5sye5FDUWCfNZgubQpNRsA==",
       "path": "system.componentmodel.annotations/4.4.1",
       "hashPath": "system.componentmodel.annotations.4.4.1.nupkg.sha512"
+    },
+    "System.Data.Entity.Repository/2.0.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MnYUvHPcOAUGIyOzKR4A6Kd918VkCjKpfFCQoNdjY6LO4y1QwrwWZtdmOs2B3wozTYfJgPWKpIeW3ZHn+ylgrA==",
+      "path": "system.data.entity.repository/2.0.0.1",
+      "hashPath": "system.data.entity.repository.2.0.0.1.nupkg.sha512"
     },
     "System.Data.SqlClient/4.4.0": {
       "type": "package",
