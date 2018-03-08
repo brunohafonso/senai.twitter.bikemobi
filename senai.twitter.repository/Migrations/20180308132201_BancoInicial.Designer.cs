@@ -11,9 +11,10 @@ using System;
 namespace senai.twitter.repository.Migrations
 {
     [DbContext(typeof(BikeMobiContext))]
-    partial class BikeMobiContextModelSnapshot : ModelSnapshot
+    [Migration("20180308132201_BancoInicial")]
+    partial class BancoInicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

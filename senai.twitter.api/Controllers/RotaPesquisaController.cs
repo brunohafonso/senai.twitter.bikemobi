@@ -15,7 +15,6 @@ namespace senai.twitter.api.Controllers
 
         public RotaPesquisaController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisa> rotaPesquisaRepository)
         {
-
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
             _rotaPesquisaRepository = rotaPesquisaRepository;
@@ -25,7 +24,7 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Busca todas as pesquisas na base de dados
         /// </summary>
-        /// <returns>Lista com todas as pesquisas realizadas.</returns>
+        /// <returns>Lista todas as pesquisas realizadas.</returns>
         [Route("todos")]
         [HttpGet]
         public IActionResult Buscar()
@@ -42,19 +41,19 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// Efetua a busca das rotas pesquisadas por um usuário X
+        /// Efetua a busca das rotas pesquisadas por um usuário com o id pesquisado
         /// </summary>
-        /// <param name="id">Id do login do serão buscadas as rotas pesquisadas</param>
+        /// <param name="id">Id do login que serão buscadas as rotas pesquisadas</param>
         /// <returns>Objeto buscado caso exista algum registro com Id persquisado</returns>
         [Route("buscarid/{id}")]
         [HttpGet]
         public IActionResult BuscarPorId(int id)
         {
             var rotas = _rotaPesquisaRepository.Listar().Where(c => c.IdLogin == id);
-            if (rotas != null)
+            if (rotas.Count() > 0)
                 return Ok(rotas);
             else
-                return NotFound();
+                return NotFound("Nenhuma pesquisa encontrada com esse Id.");
         }
 
         /// <summary>
@@ -82,7 +81,6 @@ namespace senai.twitter.api.Controllers
             {
                 return BadRequest("Erro ao cadastrar pesquisa de rota. " + ex.Message);
             }
-            
         }
     }
 }

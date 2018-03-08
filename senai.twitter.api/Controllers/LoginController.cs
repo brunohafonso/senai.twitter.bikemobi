@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
@@ -21,24 +24,57 @@ namespace senai.twitter.api.Controllers
             _rotaPesquisaRepository = rotaPesquisaRepository;
         }
 
-        // [HttpGet]
-        // public IActionResult Buscar()
-        // {
-        //     var logins = _loginRepository.Listar(new string[]{"Perfil"});
-        //     return Ok(logins);
-        // }
+        public static string EncriptarSenha(string input)
+        {
+            // step 1, calculate MD5 hash from input
+            MD5 md5 = System.Security.Cryptography.MD5.Create();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] hash = md5.ComputeHash(inputBytes);
 
-        // [HttpGet("{id}")]
-        // public IActionResult BuscarPorId(int id)
-        // {
-        //     var login = _loginRepository.BuscarPorId(id);
-        //     var perfil = _perfilRepository.BuscarPorId(id);
-        //     login.Perfil = perfil;
-        //     if (login != null)
-        //         return Ok(login);
-        //     else
-        //         return NotFound();
-        // }
+            // step 2, convert byte array to hex string
+            StringBuilder sb = new StringBuilder();
+            
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }        
+
+        /// <summary>
+        /// Busca todos os logins na base de dados
+        /// </summary>
+        /// <returns>Lista com todos os logins na base de dados</returns>
+        [Route("todos")]
+        [HttpGet]
+        public IActionResult Buscar()
+        {
+            var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisas"});
+            return Ok(logins);
+        }
+
+        /// <summary>
+        /// Efetua a busca dos logins com o id passadp
+        /// </summary>
+        /// <param name="id">Id do login que será buscado</param>
+        /// <returns>Objeto buscado caso exista algum registro com Id persquisado</returns>
+        [Route("buscarid/{id}")]
+        [HttpGet]
+        public IActionResult BuscarPorId(int id)
+        {
+            var login = _loginRepository.BuscarPorId(id);
+            var perfil = _perfilRepository.BuscarPorId(id);
+            var rotas = _rotaPesquisaRepository.Listar().Where(r => r.IdLogin == id);
+            foreach(var rota in rotas)
+            {
+                login.RotasPesquisas.Add(rota);
+            }
+            login.Perfil = perfil;
+            if (login != null)
+                return Ok(login);
+            else
+                return NotFound();
+        }
 
 
         /// <summary>
@@ -55,6 +91,7 @@ namespace senai.twitter.api.Controllers
             
             try 
             {
+                login.Senha = EncriptarSenha(login.Senha);
                 login.CriadoEm = DateTime.Now;
                 login.QtdAtualizacoes = 0;
                 login.AtualizadoPor = null;
@@ -87,6 +124,7 @@ namespace senai.twitter.api.Controllers
 
             try
             {
+                login.Senha = EncriptarSenha(login.Senha);
                 login.AtualizadoEm = DateTime.Now;
                 login.QtdAtualizacoes = login.QtdAtualizacoes + 1;
                 login.AtualizadoPor = login.NomeUsuario;
@@ -101,22 +139,22 @@ namespace senai.twitter.api.Controllers
         }
 
         
-        // [Route("deletar")]
-        // [HttpDelete]
-        // public IActionResult Deletar([FromBody] Login login)
-        // {
-        //     if(!ModelState.IsValid)
-        //         return BadRequest(ModelState);
+        [Route("deletar")]
+        [HttpDelete]
+        public IActionResult Deletar([FromBody] Login login)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
             
-        //     try
-        //     {
-        //          _loginRepository.Deletar(login);
-        //          return Ok($"Usuário {login.NomeUsuario} Deletado Com Sucesso.");
-        //     }
-        //     catch(Exception ex)
-        //     {
-        //         return BadRequest("Erro ao deletar dados. " + ex.Message);
-        //     }
-        // }
+            try
+            {
+                 _loginRepository.Deletar(login);
+                 return Ok($"Usuário {login.NomeUsuario} Deletado Com Sucesso.");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao deletar dados. " + ex.Message);
+            }
+        }
     }
 }

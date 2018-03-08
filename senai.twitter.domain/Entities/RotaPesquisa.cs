@@ -36,8 +36,10 @@ namespace senai.twitter.domain.Entities
         public string PolylinePoints { get; set; }
 
         [ForeignKey("IdLogin")]
-        public int IdLogin { get; set; }
+        
         public Login Login { get; set; }
+        
+        public int IdLogin { get; set; }
 
         public RotaPesquisa()
         {
