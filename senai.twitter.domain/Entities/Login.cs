@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
 
 namespace senai.twitter.domain.Entities
 {
@@ -9,23 +10,22 @@ namespace senai.twitter.domain.Entities
     {
         [Required]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "O campo nome de usuario deve ter no minimo 3 caracteres e no maximo 50.")]
-        //[Index("NomeUsuario", IsUnique = true)]
         public string NomeUsuario { get; set; }
 
         [Required]
         [StringLength(50)]
         [EmailAddress(ErrorMessage = "Favor insira um email valido.")]
-        //[Index("Email", IsUnique = true)]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 8, ErrorMessage = "A senha deve ter no minimo 8 caracteres.")]
+        [StringLength(128, MinimumLength = 8, ErrorMessage = "A senha deve ter no minimo 8 caracteres.")]
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 
         public Perfil Perfil { get; set; }
 
         public ICollection<RotaPesquisa> RotasPesquisas { get; set; }
+        
         public Login()
         {
 

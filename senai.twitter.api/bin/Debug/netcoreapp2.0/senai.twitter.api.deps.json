@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "41a78d0f8fbc1bc333edd6d08e5751d17037f079"
+    "signature": "6ad335a1f73add99b661550412c8dd530467bee6"
   },
   "compilationOptions": {
     "defines": [
@@ -36,6 +36,14 @@
         },
         "compile": {
           "senai.twitter.api.dll": {}
+        }
+      },
+      "EntityFramework/5.0.0": {
+        "runtime": {
+          "lib/net45/EntityFramework.dll": {}
+        },
+        "compile": {
+          "lib/net45/EntityFramework.dll": {}
         }
       },
       "Libuv/1.10.0": {
@@ -2792,6 +2800,17 @@
           "System.Text.Encoding": "4.3.0"
         }
       },
+      "System.Data.Entity.Repository/2.0.0.1": {
+        "dependencies": {
+          "EntityFramework": "5.0.0"
+        },
+        "runtime": {
+          "lib/net45/System.Data.Entity.Repository.dll": {}
+        },
+        "compile": {
+          "lib/net45/System.Data.Entity.Repository.dll": {}
+        }
+      },
       "System.Data.SqlClient/4.4.0": {
         "dependencies": {
           "Microsoft.Win32.Registry": "4.4.0",
@@ -3845,7 +3864,8 @@
       },
       "senai.twitter.domain/1.0.0": {
         "dependencies": {
-          "System.ComponentModel.Annotations": "4.4.1"
+          "System.ComponentModel.Annotations": "4.4.1",
+          "System.Data.Entity.Repository": "2.0.0.1"
         },
         "runtime": {
           "senai.twitter.domain.dll": {}
@@ -4052,6 +4072,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "EntityFramework/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WYfgJWKg/RjwU8pzZkImD9DsV+J1nqDcIGp1S0/bdnElKBmAaUC2nmq/QQAcco32KyQQWnLgJNiDzIOz2xWFbQ==",
+      "path": "entityframework/5.0.0",
+      "hashPath": "entityframework.5.0.0.nupkg.sha512"
     },
     "Libuv/1.10.0": {
       "type": "package",
@@ -5508,6 +5535,13 @@
       "sha512": "sha512-DHDrIxiqk1h03m6khKWV2X8p/uvN79rgSqpilL6uzpmSfxfU5ng8VcPtW4qsDsQDHiTv6IPV9TmD5M/vElPNLg==",
       "path": "system.console/4.3.0",
       "hashPath": "system.console.4.3.0.nupkg.sha512"
+    },
+    "System.Data.Entity.Repository/2.0.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MnYUvHPcOAUGIyOzKR4A6Kd918VkCjKpfFCQoNdjY6LO4y1QwrwWZtdmOs2B3wozTYfJgPWKpIeW3ZHn+ylgrA==",
+      "path": "system.data.entity.repository/2.0.0.1",
+      "hashPath": "system.data.entity.repository.2.0.0.1.nupkg.sha512"
     },
     "System.Data.SqlClient/4.4.0": {
       "type": "package",

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,8 +36,10 @@ namespace senai.twitter.domain.Entities
         public string PolylinePoints { get; set; }
 
         [ForeignKey("IdLogin")]
-        public int IdLogin { get; set; }
+
         public Login Login { get; set; }
+
+        public int IdLogin { get; set; }
 
         public RotaPesquisa()
         {
@@ -55,6 +58,9 @@ namespace senai.twitter.domain.Entities
             this.OrigemLat = OrigemLat;
             this.OrigemLng = OrigemLng;
             this.PolylinePoints = PolylinePoints;
+            this.CriadoEm = DateTime.Now; 
+            this.QtdAtualizacoes = 0;
+            this.AtualizadoPor = null;
         }
     }
 }

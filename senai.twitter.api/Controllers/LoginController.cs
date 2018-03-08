@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
@@ -13,21 +15,34 @@ namespace senai.twitter.api.Controllers
         private IBaseRepository<Perfil> _perfilRepository;
         private IBaseRepository<RotaPesquisa> _rotaPesquisaRepository;
 
-        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository)
+        public LoginController(IBaseRepository<Login> loginRepository, IBaseRepository<Perfil> perfilRepository)
         {
 
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
         }
 
+
+        /// <summary>
+        /// lista todos os logins cadastrados
+        /// </summary>
+        /// <returns>lista com todos os logins</returns>
+        [Route("todos")]
         [HttpGet]
         public IActionResult Buscar()
         {
-            var logins = _loginRepository.Listar(new string[]{"RotasPesquisas"});
+            var logins = _loginRepository.Listar(new string[] { "RotasPesquisas", "Perfil" });
+
             return Ok(logins);
         }
 
-        [HttpGet("{id}")]
+        /// <summary>
+        /// busca um login com o Id passado
+        /// </summary>
+        /// <param name="id">Id do login a ser buscado</param>
+        /// <returns>Objeto login com o Id pesquisado</returns>
+        [Route("burcarid/{id}")]
+        [HttpGet]
         public IActionResult BuscarPorId(int id)
         {
             var login = _loginRepository.BuscarPorId(id);
@@ -49,15 +64,15 @@ namespace senai.twitter.api.Controllers
         [HttpPost]
         public IActionResult Cadastrar([FromBody] Login login)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
-            try 
+
+            try
             {
                 login.CriadoEm = DateTime.Now;
                 login.QtdAtualizacoes = 0;
                 login.AtualizadoPor = null;
-                
+
                 login.Perfil.CriadoEm = DateTime.Now;
                 login.Perfil.QtdAtualizacoes = 0;
                 login.Perfil.AtualizadoPor = null;
@@ -65,13 +80,13 @@ namespace senai.twitter.api.Controllers
                 _loginRepository.Inserir(login);
                 return Ok($"Usuário {login.NomeUsuario} Cadastrado Com Sucesso.");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest("Erro ao cadastrar dados. " + ex.Message);
             }
-            
+
         }
-        
+
         /// <summary>
         /// Efetua a atualização dos dados do Login juntamente com os dados básicos do perfil
         /// </summary>
@@ -81,7 +96,7 @@ namespace senai.twitter.api.Controllers
         [HttpPut]
         public IActionResult Atualizar([FromBody] Login login)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
@@ -89,37 +104,33 @@ namespace senai.twitter.api.Controllers
                 login.AtualizadoEm = DateTime.Now;
                 login.QtdAtualizacoes = login.QtdAtualizacoes + 1;
                 login.AtualizadoPor = login.NomeUsuario;
-                    
+
                 _loginRepository.Atualizar(login);
                 return Ok($"Usuário {login.NomeUsuario} Atualizado Com Sucesso.");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest("Erro ao atualizar dados. " + ex.Message);
             }
         }
 
-        /// <summary>
-        /// Efetua a atualização dos dados do Login juntamente com os dados básicos do perfil
-        /// </summary>
-        /// <param name="login">Dados do login/perfil conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
-        /// <returns>String informando qual objeto foi deletado.</returns>
-        [Route("deletar")]
-        [HttpDelete]
-        public IActionResult Deletar([FromBody] Login login)
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            try
-            {
-                 _loginRepository.Deletar(login);
-                 return Ok($"Usuário {login.NomeUsuario} Deletado Com Sucesso.");
-            }
-            catch(Exception ex)
-            {
-                return BadRequest("Erro ao deletar dados. " + ex.Message);
-            }
-        }
+
+        // [Route("deletar")]
+        // [HttpDelete]
+        // public IActionResult Deletar([FromBody] Login login)
+        // {
+        //     if(!ModelState.IsValid)
+        //         return BadRequest(ModelState);
+
+        //     try
+        //     {
+        //          _loginRepository.Deletar(login);
+        //          return Ok($"Usuário {login.NomeUsuario} Deletado Com Sucesso.");
+        //     }
+        //     catch(Exception ex)
+        //     {
+        //         return BadRequest("Erro ao deletar dados. " + ex.Message);
+        //     }
+        // }
     }
 }
