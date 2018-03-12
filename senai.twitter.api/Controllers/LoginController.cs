@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
@@ -17,7 +18,6 @@ namespace senai.twitter.api.Controllers
 
         public LoginController(IBaseRepository<Login> loginRepository, IBaseRepository<Perfil> perfilRepository)
         {
-
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
         }
@@ -29,6 +29,7 @@ namespace senai.twitter.api.Controllers
         /// <returns>lista com todos os logins</returns>
         [Route("todos")]
         [HttpGet]
+        [EnableCors("AllowAnyOrigin")]
         public IActionResult Buscar()
         {
             var logins = _loginRepository.Listar(new string[] { "RotasPesquisas", "Perfil" });
@@ -43,6 +44,7 @@ namespace senai.twitter.api.Controllers
         /// <returns>Objeto login com o Id pesquisado</returns>
         [Route("burcarid/{id}")]
         [HttpGet]
+        [EnableCors("AllowAnyOrigin")]
         public IActionResult BuscarPorId(int id)
         {
             var login = _loginRepository.BuscarPorId(id);
@@ -62,6 +64,7 @@ namespace senai.twitter.api.Controllers
         /// <returns>String informando qual objeto foi cadastrado.</returns>
         [Route("cadastrar")]
         [HttpPost]
+        [EnableCors("AllowAnyOrigin")]
         public IActionResult Cadastrar([FromBody] Login login)
         {
             if (!ModelState.IsValid)
@@ -94,6 +97,7 @@ namespace senai.twitter.api.Controllers
         /// <returns>String informando qual objeto foi atualizado.</returns>
         [Route("atualizar")]
         [HttpPut]
+        [EnableCors("AllowAnyOrigin")]
         public IActionResult Atualizar([FromBody] Login login)
         {
             if (!ModelState.IsValid)

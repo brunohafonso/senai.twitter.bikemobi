@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
@@ -27,10 +28,11 @@ namespace senai.twitter.api.Controllers
         /// <returns>lista de perfis cadastrados</returns>
         [HttpGet]
         [Route("todos")]
+        [EnableCors("AllowAnyOrigin")]
         public IActionResult Buscar()
         {
             try {
-                 return Ok(_perfilRepository.Listar());
+                 return Ok(_perfilRepository.Listar(new string[]{"Login"}));
             } 
             catch(Exception ex)
             {
@@ -45,11 +47,14 @@ namespace senai.twitter.api.Controllers
         /// <returns>Objeto buscado caso exista algum registro com  Id persquisado</returns>
         [HttpGet]
         [Route("buscarid/{Id}")]
+        [EnableCors("AllowAnyOrigin")]
         public IActionResult BuscarPorId(int Id)
         {
             try
             {
                 var perfil = _perfilRepository.BuscarPorId(Id);
+                var login = _loginRepository.BuscarPorId(Id);
+                perfil.Login = login;
                 if(perfil != null)
                     return Ok(perfil);
                 else
@@ -57,7 +62,7 @@ namespace senai.twitter.api.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest("Errp ao buscar dados. " + ex.Message);
+                return BadRequest("Erro ao buscar dados. " + ex.Message);
             }
         }
 
@@ -68,6 +73,7 @@ namespace senai.twitter.api.Controllers
         /// <returns>String informando qual objeto foi atualizado.</returns>
         [HttpPut]
         [Route("atualizar")]
+        [EnableCors("AllowAnyOrigin")]
         public IActionResult Atualizar([FromBody] Perfil perfil)
         {
             if(!ModelState.IsValid)
