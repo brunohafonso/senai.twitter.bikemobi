@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
@@ -22,18 +23,33 @@ namespace senai.twitter.api.Controllers
             _perfilRepository = perfilRepository;
         }
 
+        public static string EncriptarSenha(string input)
+        {
+            // step 1, calculate MD5 hash from input
+            MD5 md5 = System.Security.Cryptography.MD5.Create();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+            // step 2, convert byte array to hex string
+            StringBuilder sb = new StringBuilder();
+            
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }        
 
         /// <summary>
-        /// lista todos os logins cadastrados
+        /// Busca todos os logins na base de dados
         /// </summary>
-        /// <returns>lista com todos os logins</returns>
+        /// <returns>Lista com todos os logins na base de dados</returns>
         [Route("todos")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult Buscar()
         {
-            var logins = _loginRepository.Listar(new string[] { "RotasPesquisas", "Perfil" });
-
+            var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisas"});
             return Ok(logins);
         }
 
@@ -72,6 +88,7 @@ namespace senai.twitter.api.Controllers
 
             try
             {
+                login.Senha = EncriptarSenha(login.Senha);
                 login.CriadoEm = DateTime.Now;
                 login.QtdAtualizacoes = 0;
                 login.AtualizadoPor = null;
@@ -105,6 +122,7 @@ namespace senai.twitter.api.Controllers
 
             try
             {
+                login.Senha = EncriptarSenha(login.Senha);
                 login.AtualizadoEm = DateTime.Now;
                 login.QtdAtualizacoes = login.QtdAtualizacoes + 1;
                 login.AtualizadoPor = login.NomeUsuario;

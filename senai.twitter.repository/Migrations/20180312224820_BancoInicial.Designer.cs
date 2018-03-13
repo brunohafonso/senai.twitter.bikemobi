@@ -11,7 +11,7 @@ using System;
 namespace senai.twitter.repository.Migrations
 {
     [DbContext(typeof(BikeMobiContext))]
-    [Migration("20180312212133_BancoInicial")]
+    [Migration("20180312224820_BancoInicial")]
     partial class BancoInicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
