@@ -41,6 +41,29 @@ namespace senai.twitter.api
                 builder => builder.AllowAnyOrigin());
             });
 
+            var signingConfigurations = new SigningConfigurations();
+            services.AddSingleton(signingConfigurations);
+
+            var tokenConfigurations = new TokenConfigurations();
+            new ConfigureFromConfigurationOptions<TokenConfigurations>(
+                Configuration.GetSection("TokenConfigurations")).Configure(tokenConfigurations);
+
+            services.AddSingleton(tokenConfigurations);
+            services.AddAuthentication(authOptions => { 
+                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions => {
+                var parametrosValidacao = bearerOptions.TokenValidationParameters;
+                parametrosValidacao.IssuerSigningKey = signingConfigurations.Key;
+                parametrosValidacao.ValidAudience = tokenConfigurations.Audience;
+                parametrosValidacao.ValidateIssuerSigningKey = true;
+            });
+
+            services.AddAuthorization(auth => {
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder().AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build());
+            });
+
+
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info {
                     Version = "V1",

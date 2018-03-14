@@ -1,12 +1,15 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
-
+using senai.twitter.repository.Repositories;
 
 namespace senai.twitter.api.Controllers
 {
@@ -40,6 +43,60 @@ namespace senai.twitter.api.Controllers
             return sb.ToString();
         }        
 
+        [Route("login")]
+        [HttpPost]
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult Validar([FromBody] Login login, [FromServices] SigningConfigurations signingConfigurations, [FromServices] TokenConfigurations tokenConfigurations)
+        {
+            Login log = _loginRepository.Listar().FirstOrDefault(c => c.Email == login.Email || c.NomeUsuario == login.NomeUsuario && c.Senha == EncriptarSenha(login.Senha));
+            if (log != null)
+            {
+                ClaimsIdentity identity = new ClaimsIdentity(
+                    new GenericIdentity(log.Id.ToString(), "Login"),
+                    new[] {
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
+                        new Claim(JwtRegisteredClaimNames.UniqueName, log.Id.ToString()),
+                        new Claim("Nome", log.NomeUsuario),
+                        new Claim(ClaimTypes.Email, log.Email)
+                    }
+                );
+
+                DateTime dataCriacao = DateTime.Now;
+                DateTime dataExpiracao = dataCriacao + TimeSpan.FromSeconds(tokenConfigurations.Seconds);
+
+                var handler = new JwtSecurityTokenHandler();
+                var securityToken = handler.CreateToken(new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
+                {
+                    Issuer = tokenConfigurations.Issuer,
+                    Audience = tokenConfigurations.Audience,
+                    SigningCredentials = signingConfigurations.SigningCredentials,
+                    Subject = identity
+                });
+
+                var token = handler.WriteToken(securityToken);
+                var retorno = new
+                {
+                    autenticacao = true,
+                    created = dataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
+                    expiration = dataExpiracao.ToString("yyyy-MM-dd HH:mm:ss"),
+                    acessToken = token,
+                    message = "Ok"
+                };
+
+                return Ok(retorno);
+            }
+
+            var retornoerro = new
+            {
+                autenticacao = false,
+                message = "Falha na Autenticação"
+            };
+
+            return BadRequest(retornoerro);
+            
+        }
+        
+        
         /// <summary>
         /// Busca todos os logins na base de dados
         /// </summary>
