@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace senai.twitter.repository.Migrations
 {
-    public partial class BancoInicial : Migration
+    public partial class bancoInicial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,7 +58,7 @@ namespace senai.twitter.repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RotasPesquisas",
+                name: "RotasPesquisadas",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -80,9 +80,9 @@ namespace senai.twitter.repository.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RotasPesquisas", x => x.Id);
+                    table.PrimaryKey("PK_RotasPesquisadas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RotasPesquisas_Logins_IdLogin",
+                        name: "FK_RotasPesquisadas_Logins_IdLogin",
                         column: x => x.IdLogin,
                         principalTable: "Logins",
                         principalColumn: "Id",
@@ -108,8 +108,8 @@ namespace senai.twitter.repository.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RotasPesquisas_IdLogin",
-                table: "RotasPesquisas",
+                name: "IX_RotasPesquisadas_IdLogin",
+                table: "RotasPesquisadas",
                 column: "IdLogin");
         }
 
@@ -119,7 +119,7 @@ namespace senai.twitter.repository.Migrations
                 name: "Perfis");
 
             migrationBuilder.DropTable(
-                name: "RotasPesquisas");
+                name: "RotasPesquisadas");
 
             migrationBuilder.DropTable(
                 name: "Logins");

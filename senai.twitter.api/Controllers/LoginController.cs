@@ -18,7 +18,7 @@ namespace senai.twitter.api.Controllers
     {
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
-        private IBaseRepository<RotaPesquisa> _rotaPesquisaRepository;
+        private IBaseRepository<RotaPesquisada> _rotaPesquisaRepository;
 
         public LoginController(IBaseRepository<Login> loginRepository, IBaseRepository<Perfil> perfilRepository)
         {
@@ -111,8 +111,15 @@ namespace senai.twitter.api.Controllers
         [EnableCors("AllowAnyOrigin")]
         public IActionResult Buscar()
         {
-            var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisas"});
-            return Ok(logins);
+            try {
+                var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisas"});
+                return Ok(logins);
+            } 
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao buscar dados. " + ex.Message);
+            }
+            
         }
 
         /// <summary>
@@ -120,7 +127,7 @@ namespace senai.twitter.api.Controllers
         /// </summary>
         /// <param name="id">Id do login a ser buscado</param>
         /// <returns>Objeto login com o Id pesquisado</returns>
-        [Route("burcarid/{id}")]
+        [Route("buscarid/{id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult BuscarPorId(int id)

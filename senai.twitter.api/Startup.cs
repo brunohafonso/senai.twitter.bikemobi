@@ -56,11 +56,14 @@ namespace senai.twitter.api
                 var parametrosValidacao = bearerOptions.TokenValidationParameters;
                 parametrosValidacao.IssuerSigningKey = signingConfigurations.Key;
                 parametrosValidacao.ValidAudience = tokenConfigurations.Audience;
+                parametrosValidacao.ValidIssuer = tokenConfigurations.Issuer;
                 parametrosValidacao.ValidateIssuerSigningKey = true;
             });
 
             services.AddAuthorization(auth => {
-                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder().AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build());
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser().Build());
             });
 
 
@@ -97,6 +100,8 @@ namespace senai.twitter.api
                     app.UseDeveloperExceptionPage();
                 }
 
+                app.UseAuthentication();
+                
                 app.UseCors("AllowAnyOrigin");
                 
                 app.UseMvc();

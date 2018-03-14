@@ -8,17 +8,17 @@ using senai.twitter.domain.Entities;
 namespace senai.twitter.api.Controllers
 {
     [Route("api/[Controller]")]
-    public class RotaPesquisaController : Controller
+    public class RotaPesquisadaController : Controller
     {
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
-        private IBaseRepository<RotaPesquisa> _rotaPesquisaRepository;
+        private IBaseRepository<RotaPesquisada> _rotaPesquisadaRepository;
 
-        public RotaPesquisaController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisa> rotaPesquisaRepository)
+        public RotaPesquisadaController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository)
         {
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
-            _rotaPesquisaRepository = rotaPesquisaRepository;
+            _rotaPesquisadaRepository = rotaPesquisadaRepository;
         }
         
         
@@ -33,7 +33,7 @@ namespace senai.twitter.api.Controllers
         {
             try
             {
-                var rotas = _rotaPesquisaRepository.Listar();
+                var rotas = _rotaPesquisadaRepository.Listar();
                 return Ok(rotas);
             }
             catch(Exception ex)
@@ -52,7 +52,7 @@ namespace senai.twitter.api.Controllers
         [EnableCors("AllowAnyOrigin")]
         public IActionResult BuscarPorId(int id)
         {
-            var rotas = _rotaPesquisaRepository.Listar().Where(c => c.IdLogin == id);
+            var rotas = _rotaPesquisadaRepository.Listar().Where(c => c.IdLogin == id);
             if (rotas.Count() > 0)
                 return Ok(rotas);
             else
@@ -67,7 +67,7 @@ namespace senai.twitter.api.Controllers
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
-        public IActionResult Cadastrar([FromBody] RotaPesquisa rota)
+        public IActionResult Cadastrar([FromBody] RotaPesquisada rota)
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -78,7 +78,7 @@ namespace senai.twitter.api.Controllers
                 rota.QtdAtualizacoes = 0;
                 rota.AtualizadoPor = null;
                 
-                _rotaPesquisaRepository.Inserir(rota);
+                _rotaPesquisadaRepository.Inserir(rota);
                 return Ok();
             }
             catch(Exception ex)

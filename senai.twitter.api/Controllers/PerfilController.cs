@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
@@ -29,6 +30,7 @@ namespace senai.twitter.api.Controllers
         [HttpGet]
         [Route("todos")]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Buscar()
         {
             try {

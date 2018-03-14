@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace senai.twitter.domain.Entities
 {
-    public class RotaPesquisa : Base
+    public class RotaPesquisada : Base
     {
         [Required]
         public int Distancia { get; set; }
@@ -42,12 +42,12 @@ namespace senai.twitter.domain.Entities
         public int IdLogin { get; set; }
 
 
-        public RotaPesquisa()
+        public RotaPesquisada()
         {
             
         }
 
-        public RotaPesquisa(int IdLogin, int Distancia, string Duracao, string DestinoEnd, double DestinoLat, double DestinoLng, string OrigemEnd, double OrigemLat, double OrigemLng, string PolylinePoints)
+        public RotaPesquisada(int IdLogin, int Distancia, string Duracao, string DestinoEnd, double DestinoLat, double DestinoLng, string OrigemEnd, double OrigemLat, double OrigemLng, string PolylinePoints)
         {
             this.IdLogin = IdLogin;
             this.Distancia = Distancia;

@@ -99,7 +99,7 @@ namespace senai.twitter.repository.Migrations
                     b.ToTable("Perfis");
                 });
 
-            modelBuilder.Entity("senai.twitter.domain.Entities.RotaPesquisa", b =>
+            modelBuilder.Entity("senai.twitter.domain.Entities.RotaPesquisada", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -140,7 +140,7 @@ namespace senai.twitter.repository.Migrations
 
                     b.HasIndex("IdLogin");
 
-                    b.ToTable("RotasPesquisas");
+                    b.ToTable("RotasPesquisadas");
                 });
 
             modelBuilder.Entity("senai.twitter.domain.Entities.Perfil", b =>
@@ -151,7 +151,7 @@ namespace senai.twitter.repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("senai.twitter.domain.Entities.RotaPesquisa", b =>
+            modelBuilder.Entity("senai.twitter.domain.Entities.RotaPesquisada", b =>
                 {
                     b.HasOne("senai.twitter.domain.Entities.Login", "Login")
                         .WithMany("RotasPesquisas")
