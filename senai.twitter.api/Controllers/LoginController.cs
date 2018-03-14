@@ -43,6 +43,11 @@ namespace senai.twitter.api.Controllers
             return sb.ToString();
         }        
 
+       /// <summary>
+        /// Efetua login
+        /// </summary>
+        /// <param name="login">Email ou nome de Usuario e senha</param>
+        /// <returns>Dados do token caso a autenticação tenha dado sucesso.</returns>
         [Route("login")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
