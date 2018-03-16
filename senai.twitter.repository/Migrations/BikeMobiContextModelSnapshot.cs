@@ -124,8 +124,6 @@ namespace senai.twitter.repository.Migrations
 
                     b.Property<int>("IdLogin");
 
-                    b.Property<int>("IdRotaRealizada");
-
                     b.Property<string>("OrigemEnd")
                         .IsRequired();
 
@@ -142,8 +140,6 @@ namespace senai.twitter.repository.Migrations
 
                     b.HasIndex("IdLogin");
 
-                    b.HasIndex("IdRotaRealizada");
-
                     b.ToTable("RotasPesquisadas");
                 });
 
@@ -158,7 +154,9 @@ namespace senai.twitter.repository.Migrations
 
                     b.Property<DateTime>("CriadoEm");
 
-                    b.Property<string>("Duracao")
+                    b.Property<int>("DuracaoInt");
+
+                    b.Property<string>("DuracaoString")
                         .IsRequired();
 
                     b.Property<int>("IdLogin");
@@ -181,7 +179,8 @@ namespace senai.twitter.repository.Migrations
 
                     b.HasIndex("IdLogin");
 
-                    b.HasIndex("IdRotaPesquisada");
+                    b.HasIndex("IdRotaPesquisada")
+                        .IsUnique();
 
                     b.ToTable("RotasRealizadas");
                 });
@@ -200,11 +199,6 @@ namespace senai.twitter.repository.Migrations
                         .WithMany("RotasPesquisadas")
                         .HasForeignKey("IdLogin")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("senai.twitter.domain.Entities.RotaRealizada", "RotaRealizada")
-                        .WithMany()
-                        .HasForeignKey("IdRotaRealizada")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("senai.twitter.domain.Entities.RotaRealizada", b =>
@@ -215,8 +209,8 @@ namespace senai.twitter.repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("senai.twitter.domain.Entities.RotaPesquisada", "RotaPesquisada")
-                        .WithMany()
-                        .HasForeignKey("IdRotaPesquisada")
+                        .WithOne("RotaRealizada")
+                        .HasForeignKey("senai.twitter.domain.Entities.RotaRealizada", "IdRotaPesquisada")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618

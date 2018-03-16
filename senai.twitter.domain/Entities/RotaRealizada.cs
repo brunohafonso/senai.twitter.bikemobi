@@ -19,7 +19,10 @@ namespace senai.twitter.domain.Entities
         public double LngFim { get; set; }
 
         [Required]
-        public string Duracao { get; set; }
+        public string DuracaoString { get; set; }
+
+        [Required]
+        public int DuracaoInt { get; set; }
 
         [Required]
         public int Kilometros { get; set; }
@@ -39,7 +42,7 @@ namespace senai.twitter.domain.Entities
             
         }
 
-        public RotaRealizada(int IdLogin, int IdRotaPesquisada, double LatInicio, double LngInicio, double LatFim, double LngFim, string Duracao, int Kilometros)
+        public RotaRealizada(int IdLogin, int IdRotaPesquisada, double LatInicio, double LngInicio, double LatFim, double LngFim, string DuracaoString, int DuracaoInt, int Kilometros)
         {
             this.IdLogin = IdLogin;
             this.IdRotaPesquisada = IdRotaPesquisada;
@@ -47,7 +50,8 @@ namespace senai.twitter.domain.Entities
             this.LngInicio = LngInicio;
             this.LatInicio = LatInicio;
             this.LatFim = LatFim;
-            this.Duracao = Duracao;
+            this.DuracaoString = DuracaoString;
+            this.DuracaoInt = DuracaoInt;
             this.Kilometros = Kilometros;
             this.CriadoEm = DateTime.Now; 
             this.QtdAtualizacoes = 0;

@@ -72,7 +72,6 @@ namespace senai.twitter.repository.Migrations
                     Distancia = table.Column<int>(nullable: false),
                     Duracao = table.Column<string>(nullable: false),
                     IdLogin = table.Column<int>(nullable: false),
-                    IdRotaRealizada = table.Column<int>(nullable: false),
                     OrigemEnd = table.Column<string>(nullable: false),
                     OrigemLat = table.Column<double>(nullable: false),
                     OrigemLng = table.Column<double>(nullable: false),
@@ -99,7 +98,8 @@ namespace senai.twitter.repository.Migrations
                     AtualizadoEm = table.Column<DateTime>(nullable: false),
                     AtualizadoPor = table.Column<string>(nullable: true),
                     CriadoEm = table.Column<DateTime>(nullable: false),
-                    Duracao = table.Column<string>(nullable: false),
+                    DuracaoInt = table.Column<int>(nullable: false),
+                    DuracaoString = table.Column<string>(nullable: false),
                     IdLogin = table.Column<int>(nullable: false),
                     IdRotaPesquisada = table.Column<int>(nullable: false),
                     Kilometros = table.Column<int>(nullable: false),
@@ -150,11 +150,6 @@ namespace senai.twitter.repository.Migrations
                 column: "IdLogin");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RotasPesquisadas_IdRotaRealizada",
-                table: "RotasPesquisadas",
-                column: "IdRotaRealizada");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RotasRealizadas_IdLogin",
                 table: "RotasRealizadas",
                 column: "IdLogin");
@@ -162,42 +157,23 @@ namespace senai.twitter.repository.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_RotasRealizadas_IdRotaPesquisada",
                 table: "RotasRealizadas",
-                column: "IdRotaPesquisada");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_RotasPesquisadas_RotasRealizadas_IdRotaRealizada",
-                table: "RotasPesquisadas",
-                column: "IdRotaRealizada",
-                principalTable: "RotasRealizadas",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                column: "IdRotaPesquisada",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_RotasPesquisadas_Logins_IdLogin",
-                table: "RotasPesquisadas");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_RotasRealizadas_Logins_IdLogin",
-                table: "RotasRealizadas");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_RotasPesquisadas_RotasRealizadas_IdRotaRealizada",
-                table: "RotasPesquisadas");
-
             migrationBuilder.DropTable(
                 name: "Perfis");
-
-            migrationBuilder.DropTable(
-                name: "Logins");
 
             migrationBuilder.DropTable(
                 name: "RotasRealizadas");
 
             migrationBuilder.DropTable(
                 name: "RotasPesquisadas");
+
+            migrationBuilder.DropTable(
+                name: "Logins");
         }
     }
 }

@@ -15,13 +15,12 @@ namespace senai.twitter.api
             }
 
             var login = new Login("brunohafonso", "brunohafonso@gmail.com", "bbc259521");
-            
-
+           
             var perfil = new Perfil(1, "Bruno Afonso", DateTime.Parse("25/04/1995"), "SP", "São Paulo", "sou ciclista com orgulho", "www.google.com.br");
 
             var rotaPesquisada = new RotaPesquisada(1, 3, "10 mins", "R. Bom Pastor - Ipiranga, São Paulo - SP, Brazil", -23.5901388, -46.607101, "R. do Capitarizinho - Vila Liviero, São Paulo - SP, Brazil", -23.6479125, -46.596678, "lvioCf|k{GVw@");
 
-            var rotaRealizada = new RotaRealizada(1, 1, -23.6479125, -46.596678, -23.5901388, -46.607101, "10 mins", 3);
+            var rotaRealizada = new RotaRealizada(1, 1, -23.6479125, -46.596678, -23.5901388, -46.607101, "10 mins", 600, 3);
             
             _context.Logins.Add(login);
             _context.Perfis.Add(perfil);

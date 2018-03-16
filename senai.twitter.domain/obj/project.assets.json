@@ -817,25 +817,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\44063076806\\.nuget\\packages\\": {},
+    "C:\\Users\\bruno\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\44063076806\\Desktop\\senai.twitter.bikemobi\\senai.twitter.domain\\senai.twitter.domain.csproj",
+      "projectUniqueName": "C:\\Users\\bruno\\Desktop\\senai.twitter.bikemobi\\senai.twitter.domain\\senai.twitter.domain.csproj",
       "projectName": "senai.twitter.domain",
-      "projectPath": "C:\\Users\\44063076806\\Desktop\\senai.twitter.bikemobi\\senai.twitter.domain\\senai.twitter.domain.csproj",
-      "packagesPath": "C:\\Users\\44063076806\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\44063076806\\Desktop\\senai.twitter.bikemobi\\senai.twitter.domain\\obj\\",
+      "projectPath": "C:\\Users\\bruno\\Desktop\\senai.twitter.bikemobi\\senai.twitter.domain\\senai.twitter.domain.csproj",
+      "packagesPath": "C:\\Users\\bruno\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\bruno\\Desktop\\senai.twitter.bikemobi\\senai.twitter.domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\44063076806\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\bruno\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
       ],

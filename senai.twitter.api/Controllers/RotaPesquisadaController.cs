@@ -14,11 +14,14 @@ namespace senai.twitter.api.Controllers
         private IBaseRepository<Perfil> _perfilRepository;
         private IBaseRepository<RotaPesquisada> _rotaPesquisadaRepository;
 
-        public RotaPesquisadaController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository)
+        private IBaseRepository<RotaRealizada> _rotaRealizadaRepository;
+
+        public RotaPesquisadaController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository,IBaseRepository<RotaRealizada> rotaRealizadaRepository)
         {
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
             _rotaPesquisadaRepository = rotaPesquisadaRepository;
+            _rotaRealizadaRepository = rotaRealizadaRepository;
         }
         
         

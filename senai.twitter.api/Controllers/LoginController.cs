@@ -18,7 +18,9 @@ namespace senai.twitter.api.Controllers
     {
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
-        private IBaseRepository<RotaPesquisada> _rotaPesquisaRepository;
+        private IBaseRepository<RotaPesquisada> _rotaPesquisadaRepository;
+
+        private IBaseRepository<RotaRealizada> _rotaRealizadaRepository;
 
         public LoginController(IBaseRepository<Login> loginRepository, IBaseRepository<Perfil> perfilRepository)
         {
@@ -112,7 +114,7 @@ namespace senai.twitter.api.Controllers
         public IActionResult Buscar()
         {
             try {
-                var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisas"});
+                var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisadas","RotasRealizadas"});
                 return Ok(logins);
             } 
             catch(Exception ex)
@@ -132,9 +134,9 @@ namespace senai.twitter.api.Controllers
         [EnableCors("AllowAnyOrigin")]
         public IActionResult BuscarPorId(int id)
         {
-            var login = _loginRepository.BuscarPorId(id);
-            var perfil = _perfilRepository.BuscarPorId(id);
-            login.Perfil = perfil;
+            var login = _loginRepository.BuscarPorId(id, new string[]{"Perfil"});
+            //var perfil = _perfilRepository.BuscarPorId(id);
+            //login.Perfil = perfil;
             if (login != null)
                 return Ok(login);
             else
