@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using senai.twitter.domain.Entities;
 
@@ -8,11 +9,15 @@ namespace senai.twitter.repository.Context {
         public DbSet<Login> Logins { get; set; }
         public DbSet<Perfil> Perfis { get; set; }
         public DbSet<RotaPesquisada> RotasPesquisadas { get; set; }
+        public DbSet<RotaRealizada> RotasRealizadas { get; set; }
 
         protected override void OnModelCreating (ModelBuilder modelBuilder) {
             modelBuilder.Entity<Login> ().ToTable ("Logins");
             modelBuilder.Entity<Perfil> ().ToTable ("Perfis");
             modelBuilder.Entity<RotaPesquisada> ().ToTable ("RotasPesquisadas");
+            modelBuilder.Entity<RotaRealizada>().ToTable("RotasRealizadas");
+
+            
 
             modelBuilder
                 .Entity<Login> ()
@@ -23,6 +28,11 @@ namespace senai.twitter.repository.Context {
                 .Entity<Login> ()
                 .HasIndex (u => u.NomeUsuario)
                 .IsUnique ();
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
 
             base.OnModelCreating (modelBuilder);
         }

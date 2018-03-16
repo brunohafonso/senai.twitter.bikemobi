@@ -26,6 +26,8 @@ namespace senai.twitter.domain.Entities
         public Perfil Perfil { get; set; }
 
         public ICollection<RotaPesquisada> RotasPesquisadas { get; set; }
+
+        public ICollection<RotaRealizada> RotasRealizadas { get; set; }
         
         public Login()
         {

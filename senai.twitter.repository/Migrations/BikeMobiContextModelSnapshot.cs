@@ -124,6 +124,8 @@ namespace senai.twitter.repository.Migrations
 
                     b.Property<int>("IdLogin");
 
+                    b.Property<int>("IdRotaRealizada");
+
                     b.Property<string>("OrigemEnd")
                         .IsRequired();
 
@@ -140,7 +142,48 @@ namespace senai.twitter.repository.Migrations
 
                     b.HasIndex("IdLogin");
 
+                    b.HasIndex("IdRotaRealizada");
+
                     b.ToTable("RotasPesquisadas");
+                });
+
+            modelBuilder.Entity("senai.twitter.domain.Entities.RotaRealizada", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("AtualizadoEm");
+
+                    b.Property<string>("AtualizadoPor");
+
+                    b.Property<DateTime>("CriadoEm");
+
+                    b.Property<string>("Duracao")
+                        .IsRequired();
+
+                    b.Property<int>("IdLogin");
+
+                    b.Property<int>("IdRotaPesquisada");
+
+                    b.Property<int>("Kilometros");
+
+                    b.Property<double>("LatFim");
+
+                    b.Property<double>("LatInicio");
+
+                    b.Property<double>("LngFim");
+
+                    b.Property<double>("LngInicio");
+
+                    b.Property<int>("QtdAtualizacoes");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdLogin");
+
+                    b.HasIndex("IdRotaPesquisada");
+
+                    b.ToTable("RotasRealizadas");
                 });
 
             modelBuilder.Entity("senai.twitter.domain.Entities.Perfil", b =>
@@ -148,15 +191,33 @@ namespace senai.twitter.repository.Migrations
                     b.HasOne("senai.twitter.domain.Entities.Login", "Login")
                         .WithOne("Perfil")
                         .HasForeignKey("senai.twitter.domain.Entities.Perfil", "IdLogin")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("senai.twitter.domain.Entities.RotaPesquisada", b =>
                 {
                     b.HasOne("senai.twitter.domain.Entities.Login", "Login")
-                        .WithMany("RotasPesquisas")
+                        .WithMany("RotasPesquisadas")
                         .HasForeignKey("IdLogin")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("senai.twitter.domain.Entities.RotaRealizada", "RotaRealizada")
+                        .WithMany()
+                        .HasForeignKey("IdRotaRealizada")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("senai.twitter.domain.Entities.RotaRealizada", b =>
+                {
+                    b.HasOne("senai.twitter.domain.Entities.Login", "Login")
+                        .WithMany("RotasRealizadas")
+                        .HasForeignKey("IdLogin")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("senai.twitter.domain.Entities.RotaPesquisada", "RotaPesquisada")
+                        .WithMany()
+                        .HasForeignKey("IdRotaPesquisada")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

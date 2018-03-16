@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -41,6 +42,10 @@ namespace senai.twitter.domain.Entities
         
         public int IdLogin { get; set; }
 
+        [ForeignKey("IdRotaRealizada")]
+        public RotaRealizada RotaRealizada { get; set; }
+
+        public int IdRotaRealizada { get; set; }
 
         public RotaPesquisada()
         {
