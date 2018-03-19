@@ -10,13 +10,14 @@ namespace senai.twitter.repository.Context {
         public DbSet<Perfil> Perfis { get; set; }
         public DbSet<RotaPesquisada> RotasPesquisadas { get; set; }
         public DbSet<RotaRealizada> RotasRealizadas { get; set; }
+        public DbSet<Avaliacao> Avaliacoes { get; set; }
 
         protected override void OnModelCreating (ModelBuilder modelBuilder) {
             modelBuilder.Entity<Login> ().ToTable ("Logins");
             modelBuilder.Entity<Perfil> ().ToTable ("Perfis");
             modelBuilder.Entity<RotaPesquisada> ().ToTable ("RotasPesquisadas");
             modelBuilder.Entity<RotaRealizada>().ToTable("RotasRealizadas");
-
+            modelBuilder.Entity<Avaliacao>().ToTable("Avaliacoes");
             
 
             modelBuilder

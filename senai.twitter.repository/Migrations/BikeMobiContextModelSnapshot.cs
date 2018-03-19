@@ -20,6 +20,37 @@ namespace senai.twitter.repository.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("senai.twitter.domain.Entities.Avaliacao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("AtualizadoEm");
+
+                    b.Property<string>("AtualizadoPor");
+
+                    b.Property<int>("AvSeguranca");
+
+                    b.Property<int>("AvTrajeto");
+
+                    b.Property<DateTime>("CriadoEm");
+
+                    b.Property<int>("IdLogin");
+
+                    b.Property<int>("IdRotaRealizada");
+
+                    b.Property<int>("QtdAtualizacoes");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdLogin");
+
+                    b.HasIndex("IdRotaRealizada")
+                        .IsUnique();
+
+                    b.ToTable("Avaliacoes");
+                });
+
             modelBuilder.Entity("senai.twitter.domain.Entities.Login", b =>
                 {
                     b.Property<int>("Id")
@@ -183,6 +214,19 @@ namespace senai.twitter.repository.Migrations
                         .IsUnique();
 
                     b.ToTable("RotasRealizadas");
+                });
+
+            modelBuilder.Entity("senai.twitter.domain.Entities.Avaliacao", b =>
+                {
+                    b.HasOne("senai.twitter.domain.Entities.Login", "Login")
+                        .WithMany("Avaliacoes")
+                        .HasForeignKey("IdLogin")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("senai.twitter.domain.Entities.RotaRealizada", "RotaRealizada")
+                        .WithOne("Avaliacao")
+                        .HasForeignKey("senai.twitter.domain.Entities.Avaliacao", "IdRotaRealizada")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("senai.twitter.domain.Entities.Perfil", b =>

@@ -43,7 +43,15 @@ namespace senai.twitter.repository.Repositories {
             try {
                 //Para buscar a chave primaria da classe
                 var chavePrimaria = _context.Model.FindEntityType (typeof (T)).FindPrimaryKey ().Properties[0];
-                return _context.Set<T> ().FirstOrDefault (e => EF.Property<int> (e, chavePrimaria.Name) == id);
+                var query = _context.Set<T>().AsQueryable();
+                
+                if(includes == null) return query.FirstOrDefault (e => EF.Property<int> (e, chavePrimaria.Name) == id);
+                
+                foreach (var item in includes) {
+                    query = query.Include (item);
+                }
+
+                return query.FirstOrDefault (e => EF.Property<int> (e, chavePrimaria.Name) == id);
             } catch (System.Exception ex) {
                 throw new Exception (ex.Message);
             }

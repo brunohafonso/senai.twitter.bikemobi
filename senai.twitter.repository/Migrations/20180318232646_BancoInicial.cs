@@ -126,6 +126,49 @@ namespace senai.twitter.repository.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Avaliacoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    AtualizadoEm = table.Column<DateTime>(nullable: false),
+                    AtualizadoPor = table.Column<string>(nullable: true),
+                    AvSeguranca = table.Column<int>(nullable: false),
+                    AvTrajeto = table.Column<int>(nullable: false),
+                    CriadoEm = table.Column<DateTime>(nullable: false),
+                    IdLogin = table.Column<int>(nullable: false),
+                    IdRotaRealizada = table.Column<int>(nullable: false),
+                    QtdAtualizacoes = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Avaliacoes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Avaliacoes_Logins_IdLogin",
+                        column: x => x.IdLogin,
+                        principalTable: "Logins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Avaliacoes_RotasRealizadas_IdRotaRealizada",
+                        column: x => x.IdRotaRealizada,
+                        principalTable: "RotasRealizadas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Avaliacoes_IdLogin",
+                table: "Avaliacoes",
+                column: "IdLogin");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Avaliacoes_IdRotaRealizada",
+                table: "Avaliacoes",
+                column: "IdRotaRealizada",
+                unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_Logins_Email",
                 table: "Logins",
@@ -163,6 +206,9 @@ namespace senai.twitter.repository.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Avaliacoes");
+
             migrationBuilder.DropTable(
                 name: "Perfis");
 

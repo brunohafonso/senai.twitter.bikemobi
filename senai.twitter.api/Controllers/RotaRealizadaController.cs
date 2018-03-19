@@ -35,7 +35,7 @@ namespace senai.twitter.api.Controllers
         {
            try
            {
-               var rotas = _rotaRealizadaRepository.Listar(new string[]{"RotaPesquisada"});
+               var rotas = _rotaRealizadaRepository.Listar(new string[]{"RotaPesquisada","Avaliacao"});
                return Ok(rotas);
            } 
            catch(Exception ex)
@@ -47,14 +47,14 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Efetua a busca das rotas realizadas por um usuário com o id pesquisado
         /// </summary>
-        /// <param name="id">Id do login que serão buscadas as rotas realizadas</param>
+        /// <param name="Id">Id do login que serão buscadas as rotas realizadas</param>
         /// <returns>Objeto buscado caso exista algum registro com Id persquisado</returns>
         [HttpGet]
         [Route("buscarid/{Id}")]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult buscarid(int Id)
         {
-            var rotas = _rotaRealizadaRepository.Listar(new string[]{"RotaPesquisada"}).Where(r => r.IdLogin == Id);
+            var rotas = _rotaRealizadaRepository.Listar(new string[]{"RotaPesquisada", "Avaliacao"}).Where(r => r.IdLogin == Id);
             if (rotas.Count() > 0)
                 return Ok(rotas);
             else

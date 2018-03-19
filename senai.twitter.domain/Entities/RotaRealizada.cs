@@ -32,11 +32,11 @@ namespace senai.twitter.domain.Entities
 
         public int IdLogin { get; set; }
 
+        
         [ForeignKey("IdRotaPesquisada")]
         public RotaPesquisada RotaPesquisada { get; set; }
-
         public int IdRotaPesquisada { get; set; }
-
+        public Avaliacao Avaliacao { get; set; }
         public RotaRealizada()
         {
             

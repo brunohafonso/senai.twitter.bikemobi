@@ -114,7 +114,7 @@ namespace senai.twitter.api.Controllers
         public IActionResult Buscar()
         {
             try {
-                var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisadas","RotasRealizadas"});
+                var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
                 return Ok(logins);
             } 
             catch(Exception ex)
@@ -127,16 +127,14 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// busca um login com o Id passado
         /// </summary>
-        /// <param name="id">Id do login a ser buscado</param>
+        /// <param name="Id">Id do login a ser buscado</param>
         /// <returns>Objeto login com o Id pesquisado</returns>
-        [Route("buscarid/{id}")]
+        [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
-        public IActionResult BuscarPorId(int id)
+        public IActionResult BuscarPorId(int Id)
         {
-            var login = _loginRepository.BuscarPorId(id, new string[]{"Perfil"});
-            //var perfil = _perfilRepository.BuscarPorId(id);
-            //login.Perfil = perfil;
+            var login = _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
             if (login != null)
                 return Ok(login);
             else
@@ -207,7 +205,13 @@ namespace senai.twitter.api.Controllers
             }
         }
 
-
+        [Route("historico/{id}")]
+        [HttpGet]
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult Historico(int id)
+        {
+            return Ok();
+        }
         // [Route("deletar")]
         // [HttpDelete]
         // public IActionResult Deletar([FromBody] Login login)
