@@ -115,10 +115,14 @@ namespace senai.twitter.api.Controllers
         {
             var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
             var retorno = new {
-                Atualizacoes = usuario.QtdAtualizacoes,
+                atualizacoes = usuario.QtdAtualizacoes,
+                ultimaAtualizacao = usuario.AtualizadoEm,
                 rotaPesquisadas = usuario.RotasPesquisadas.Count(),
+                dataUltimaPesquisa = usuario.RotasPesquisadas.Last().CriadoEm,
                 rotasRealizadas = usuario.RotasRealizadas.Count(),
-                Avaliacoes = usuario.Avaliacoes.Count()
+                dataUltimaRotaRealizada = usuario.RotasRealizadas.Last().CriadoEm,
+                Avaliacoes = usuario.Avaliacoes.Count(),
+                dataUltimaAvaliacao = usuario.Avaliacoes.Last().CriadoEm
             };
 
             if(usuario != null)
