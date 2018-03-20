@@ -11,6 +11,7 @@ namespace senai.twitter.repository.Context {
         public DbSet<RotaPesquisada> RotasPesquisadas { get; set; }
         public DbSet<RotaRealizada> RotasRealizadas { get; set; }
         public DbSet<Avaliacao> Avaliacoes { get; set; }
+        public DbSet<RequisicaoAlterarSenha> RequisicoesAlteracaoSenha { get; set; }
 
         protected override void OnModelCreating (ModelBuilder modelBuilder) {
             modelBuilder.Entity<Login> ().ToTable ("Logins");
@@ -18,7 +19,7 @@ namespace senai.twitter.repository.Context {
             modelBuilder.Entity<RotaPesquisada> ().ToTable ("RotasPesquisadas");
             modelBuilder.Entity<RotaRealizada>().ToTable("RotasRealizadas");
             modelBuilder.Entity<Avaliacao>().ToTable("Avaliacoes");
-            
+            modelBuilder.Entity<RequisicaoAlterarSenha>().ToTable("RequisicoesAlteracaoSenha");
 
             modelBuilder
                 .Entity<Login> ()

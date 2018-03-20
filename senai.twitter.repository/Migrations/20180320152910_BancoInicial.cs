@@ -29,6 +29,21 @@ namespace senai.twitter.repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RequisicoesAlteracaoSenha",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Email = table.Column<string>(nullable: false),
+                    Expiracao = table.Column<DateTime>(nullable: false),
+                    IdLogin = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RequisicoesAlteracaoSenha", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Perfis",
                 columns: table => new
                 {
@@ -211,6 +226,9 @@ namespace senai.twitter.repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "Perfis");
+
+            migrationBuilder.DropTable(
+                name: "RequisicoesAlteracaoSenha");
 
             migrationBuilder.DropTable(
                 name: "RotasRealizadas");

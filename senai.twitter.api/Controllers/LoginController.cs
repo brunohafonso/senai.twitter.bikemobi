@@ -27,13 +27,16 @@ namespace senai.twitter.api.Controllers
 
         private IBaseRepository<Avaliacao> _avaliacaoRepository;
 
-        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository,IBaseRepository<RotaRealizada> rotaRealizadaRepository, IBaseRepository<Avaliacao> avaliacaoRepository, TokenConfigurations tokenOptions)
+        private IBaseRepository<RequisicaoAlterarSenha> _requisicaoAlterarSenhaRepository;
+
+        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository,IBaseRepository<RotaRealizada> rotaRealizadaRepository, IBaseRepository<Avaliacao> avaliacaoRepository, TokenConfigurations tokenOptions, IBaseRepository<RequisicaoAlterarSenha> requisicaoAlterarSenhaRepository)
         {
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
             _rotaPesquisadaRepository = rotaPesquisadaRepository;
             _rotaRealizadaRepository = rotaRealizadaRepository;
             _avaliacaoRepository = avaliacaoRepository;
+            _requisicaoAlterarSenhaRepository = requisicaoAlterarSenhaRepository;
             _tokenOptions = tokenOptions;
         }
 
@@ -57,12 +60,12 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Efetua login
         /// </summary>
-        /// <param name="login">Email ou nome de Usuario e senha</param>
+        /// <param name="login">Email e Senha do usuário.</param>
         /// <returns>Dados do token caso a autenticação tenha dado sucesso.</returns>
         [Route("login")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
-        public IActionResult Validar([FromBody] Login login, [FromServices] SigningConfigurations signingConfigurations, [FromServices] TokenConfigurations tokenConfigurations)
+        public IActionResult Logar([FromBody] Login login, [FromServices] SigningConfigurations signingConfigurations, [FromServices] TokenConfigurations tokenConfigurations)
         {
             Login log = _loginRepository.Listar().FirstOrDefault(c => c.Email == login.Email && c.Senha == EncriptarSenha(login.Senha));
             if (log != null)
@@ -111,33 +114,104 @@ namespace senai.twitter.api.Controllers
             return BadRequest(retornoerro);
             
         }
-        
+
+        /// <summary>
+        /// Solicita alteração de senha
+        /// </summary>
+        /// <param name="login">Email e nome de usuário.</param>
+        /// <returns>Se a solicitação foi finalizada com sucesso.</returns>
+        [Route("esqueciminhasenha")]
         [HttpPost]
-        [Route("teste")]
-        public IActionResult teste([FromBody] string token)
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult SolicitarResetSenha([FromBody] Login login)
         {
-            var validationParameters = new TokenValidationParameters()
-            {
-                ValidIssuer = _tokenOptions.Issuer,
-                ValidAudience = _tokenOptions.Audience,
-                IssuerSigningKey = _tokenOptions.SigningKey,
-                RequireExpirationTime = true
-            };
+            Login log = _loginRepository.Listar().FirstOrDefault(c => c.NomeUsuario == login.NomeUsuario && c.Email == login.Email);
+            if(log != null) 
+                try 
+                {
+                    var requisicao = new RequisicaoAlterarSenha(log.Id, log.Email);
+                    _requisicaoAlterarSenhaRepository.Inserir(requisicao);
+                    return Ok("Sua alteração de senha foi recebida com sucesso, em breve você receberá um email cons as intruções para alteração da senha.");
+                }
+                catch(Exception ex)
+                {
+                    return BadRequest("Erro ao solicitar nova senha. " + ex.Message);
+                }
+                   
+            return BadRequest("Nome de usuário e/ou email não cadastrados.");
+        }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken securityToken = null;
+        /// <summary>
+        /// Finaliza a alteração da senha.
+        /// </summary>
+        /// <param name="login">Senha do usuário.</param>
+        /// <param name="Id">Id da requisição de alteração de senha.</param>
+        /// <returns>Se a alteração de senha foi finalizada com sucesso.</returns>
+        [Route("resetarsenha/{Id}")]
+        [HttpPost]
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult ResetarSenha(int Id, [FromBody] Login login)
+        {
+            var requisicao = _requisicaoAlterarSenhaRepository.BuscarPorId(Id);
+            if(requisicao == null) return BadRequest("Requisição de alteração de senha inexistente.");
 
-            try
+            var expiracao = requisicao.Expiracao;
+            var expirada = expiracao.CompareTo(DateTime.Now);
+            if(expirada <= 0) 
+                try
+                {
+                    _requisicaoAlterarSenhaRepository.Deletar(requisicao);
+                    return Ok("Requisição de alteração de senha expirada.");
+                }
+                catch(Exception ex)
+                {
+                    return BadRequest("Erro ao processar alteração de senha. "+ ex.Message);
+                }
+            
+            Login log = _loginRepository.BuscarPorId(requisicao.IdLogin);
+            log.Senha = EncriptarSenha(login.Senha);
+            log.AtualizadoPor = log.NomeUsuario;
+            log.AtualizadoEm = DateTime.Now;
+            log.QtdAtualizacoes = log.QtdAtualizacoes + 1;
+
+            try 
             {
-                return Ok(tokenHandler.ValidateToken(token, validationParameters, out securityToken));
+                _requisicaoAlterarSenhaRepository.Deletar(requisicao);
+                _loginRepository.Atualizar(log);
+                return Ok("Senha alterada com sucesso.");
             }
             catch(Exception ex)
             {
-                return BadRequest("Token Invalido. " + ex.Message);
+                return BadRequest("Erro ao finalizar a alteração de senha. " + ex.Message);
             }
-
-
+            
         }
+
+        
+        // [HttpPost]
+        // [Route("teste")]
+        // public IActionResult teste([FromBody] string token)
+        // {
+        //     var validationParameters = new TokenValidationParameters()
+        //     {
+        //         ValidIssuer = _tokenOptions.Issuer,
+        //         ValidAudience = _tokenOptions.Audience,
+        //         IssuerSigningKey = _tokenOptions.SigningKey,
+        //         RequireExpirationTime = true
+        //     };
+
+        //     var tokenHandler = new JwtSecurityTokenHandler();
+        //     SecurityToken securityToken = null;
+
+        //     try
+        //     {
+        //         return Ok(tokenHandler.ValidateToken(token, validationParameters, out securityToken));
+        //     }
+        //     catch(Exception ex)
+        //     {
+        //         return BadRequest("Token Invalido. " + ex.Message);
+        //     }
+        // }
 
 
         /// <summary>

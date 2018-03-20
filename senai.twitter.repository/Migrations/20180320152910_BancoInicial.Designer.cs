@@ -11,7 +11,7 @@ using System;
 namespace senai.twitter.repository.Migrations
 {
     [DbContext(typeof(BikeMobiContext))]
-    [Migration("20180318232646_BancoInicial")]
+    [Migration("20180320152910_BancoInicial")]
     partial class BancoInicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,6 +129,23 @@ namespace senai.twitter.repository.Migrations
                         .IsUnique();
 
                     b.ToTable("Perfis");
+                });
+
+            modelBuilder.Entity("senai.twitter.domain.Entities.RequisicaoAlterarSenha", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Email")
+                        .IsRequired();
+
+                    b.Property<DateTime>("Expiracao");
+
+                    b.Property<int>("IdLogin");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RequisicoesAlteracaoSenha");
                 });
 
             modelBuilder.Entity("senai.twitter.domain.Entities.RotaPesquisada", b =>
