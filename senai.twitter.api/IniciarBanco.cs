@@ -22,12 +22,10 @@ namespace senai.twitter.api
 
             var rotaRealizada = new RotaRealizada(1, 1, -23.6479125, -46.596678, -23.5901388, -46.607101, "10 mins", 600, 3);
             
-            rotaRealizada.Avaliacao = new Avaliacao() {
-                IdLogin = 1,
-                AvTrajeto = 3,
-                AvSeguranca = 4
-            };
+            var avaliacao = new Avaliacao(1, 1, 4, 5);
 
+            rotaRealizada.Avaliacao = avaliacao;
+            
             _context.Logins.Add(login);
             _context.Perfis.Add(perfil);
             _context.RotasPesquisadas.Add(rotaPesquisada);

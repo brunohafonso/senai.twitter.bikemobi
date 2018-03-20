@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
 using senai.twitter.repository.Context;
@@ -23,6 +24,8 @@ namespace senai.twitter.api.Controllers
             _perfilRepository = perfilRepository;
         }
 
+       
+
         /// <summary>
         /// Busca todos os registros de perfis cadastrados
         /// </summary>
@@ -30,7 +33,7 @@ namespace senai.twitter.api.Controllers
         [HttpGet]
         [Route("todos")]
         [EnableCors("AllowAnyOrigin")]
-        //[Authorize("Bearer")]
+        [Authorize("Bearer")]
         public IActionResult Buscar()
         {
             try {

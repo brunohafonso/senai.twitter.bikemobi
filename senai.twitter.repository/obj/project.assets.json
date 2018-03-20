@@ -1899,6 +1899,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.0",
         "dependencies": {
+          "Microsoft.IdentityModel.Tokens": "5.2.1",
           "System.ComponentModel.Annotations": "4.4.1",
           "System.Data.Entity.Repository": "2.0.0.1"
         },

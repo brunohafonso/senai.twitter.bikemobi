@@ -7,6 +7,7 @@ using System.Security.Principal;
 using System.Text;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
 using senai.twitter.repository.Repositories;
@@ -16,6 +17,8 @@ namespace senai.twitter.api.Controllers
     [Route("api/cadastro")]
     public class LoginController : Controller
     {
+        
+        private readonly TokenConfigurations _tokenOptions;
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
         private IBaseRepository<RotaPesquisada> _rotaPesquisadaRepository;
@@ -24,13 +27,14 @@ namespace senai.twitter.api.Controllers
 
         private IBaseRepository<Avaliacao> _avaliacaoRepository;
 
-        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository,IBaseRepository<RotaRealizada> rotaRealizadaRepository, IBaseRepository<Avaliacao> avaliacaoRepository)
+        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository,IBaseRepository<RotaRealizada> rotaRealizadaRepository, IBaseRepository<Avaliacao> avaliacaoRepository, TokenConfigurations tokenOptions)
         {
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
             _rotaPesquisadaRepository = rotaPesquisadaRepository;
             _rotaRealizadaRepository = rotaRealizadaRepository;
             _avaliacaoRepository = avaliacaoRepository;
+            _tokenOptions = tokenOptions;
         }
 
         public static string EncriptarSenha(string input)
@@ -50,7 +54,7 @@ namespace senai.twitter.api.Controllers
             return sb.ToString();
         }        
 
-       /// <summary>
+        /// <summary>
         /// Efetua login
         /// </summary>
         /// <param name="login">Email ou nome de Usuario e senha</param>
@@ -108,27 +112,81 @@ namespace senai.twitter.api.Controllers
             
         }
         
+        [HttpPost]
+        [Route("teste")]
+        public IActionResult teste([FromBody] string token)
+        {
+            var validationParameters = new TokenValidationParameters()
+            {
+                ValidIssuer = _tokenOptions.Issuer,
+                ValidAudience = _tokenOptions.Audience,
+                IssuerSigningKey = _tokenOptions.SigningKey,
+                RequireExpirationTime = true
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken = null;
+
+            try
+            {
+                return Ok(tokenHandler.ValidateToken(token, validationParameters, out securityToken));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Token Invalido. " + ex.Message);
+            }
+
+
+        }
+
+
+        /// <summary>
+        /// Retorna dados do historico do usuário
+        /// </summary>
+        /// <param name="Id">Id do usuári que o histórico será pesquisado.</param>
+        /// <returns>Dados do Histórico do usuário.</returns>
         [Route("historico/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult Historico(int Id)
         {
-            var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
-            var retorno = new {
-                atualizacoes = usuario.QtdAtualizacoes,
-                ultimaAtualizacao = usuario.AtualizadoEm,
-                rotaPesquisadas = usuario.RotasPesquisadas.Count(),
-                dataUltimaPesquisa = usuario.RotasPesquisadas.Last().CriadoEm,
-                rotasRealizadas = usuario.RotasRealizadas.Count(),
-                dataUltimaRotaRealizada = usuario.RotasRealizadas.Last().CriadoEm,
-                Avaliacoes = usuario.Avaliacoes.Count(),
-                dataUltimaAvaliacao = usuario.Avaliacoes.Last().CriadoEm
-            };
+            var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil"});
 
-            if(usuario != null)
+            if(usuario != null) {
+                var rotasPesquisadas = _rotaPesquisadaRepository.Listar().Where(c => c.IdLogin == Id);
+
+                var rotasRealizadas = _rotaRealizadaRepository.Listar().Where(c => c.IdLogin == Id);
+
+                var avaliacoes = _avaliacaoRepository.Listar().Where(c => c.IdLogin == Id);
+
+                var tempoTrajetos = 0;
+
+                foreach(var item in rotasRealizadas)
+                {
+                    tempoTrajetos = tempoTrajetos + item.DuracaoInt;
+                }
+                
+                var retorno = new {
+                    QtdAtualizacoesLogin = usuario.QtdAtualizacoes,
+                    ultimaAtualizacaoLogin = usuario.AtualizadoEm,
+                    QtdAtualizacoesPerfil = usuario.Perfil.QtdAtualizacoes,
+                    ultimaAtualizacaoPerfil = usuario.Perfil.AtualizadoEm,
+                    rotaPesquisadas = rotasPesquisadas.Count(),
+                    dataUltimaPesquisa = rotasPesquisadas.Last().CriadoEm,
+                    QtdRotasRealizadas = rotasRealizadas.Count(),
+                    dataUltimaRotaRealizada = rotasRealizadas.Last().CriadoEm,
+                    QtdAvaliacoes = avaliacoes.Count(),
+                    dataUltimaAvaliacao = avaliacoes.Last().CriadoEm,
+                    tempoUsoApp = (tempoTrajetos / 60) + " mins"
+                };
+
                 return Ok(retorno);
-            else
-                return NotFound("Não existe nenhum usuario com esse Id cadastrado.");
+            }
+            else 
+            {
+                return BadRequest("Não existe nenhum usuario com esse Id cadastrado. ");
+            }
+                
         }
         
         /// <summary>
