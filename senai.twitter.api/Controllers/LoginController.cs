@@ -18,12 +18,19 @@ namespace senai.twitter.api.Controllers
     {
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
-        private IBaseRepository<RotaPesquisada> _rotaPesquisaRepository;
+        private IBaseRepository<RotaPesquisada> _rotaPesquisadaRepository;
 
-        public LoginController(IBaseRepository<Login> loginRepository, IBaseRepository<Perfil> perfilRepository)
+        private IBaseRepository<RotaRealizada> _rotaRealizadaRepository;
+
+        private IBaseRepository<Avaliacao> _avaliacaoRepository;
+
+        public LoginController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository,IBaseRepository<RotaRealizada> rotaRealizadaRepository, IBaseRepository<Avaliacao> avaliacaoRepository)
         {
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
+            _rotaPesquisadaRepository = rotaPesquisadaRepository;
+            _rotaRealizadaRepository = rotaRealizadaRepository;
+            _avaliacaoRepository = avaliacaoRepository;
         }
 
         public static string EncriptarSenha(string input)
@@ -53,7 +60,7 @@ namespace senai.twitter.api.Controllers
         [EnableCors("AllowAnyOrigin")]
         public IActionResult Validar([FromBody] Login login, [FromServices] SigningConfigurations signingConfigurations, [FromServices] TokenConfigurations tokenConfigurations)
         {
-            Login log = _loginRepository.Listar().FirstOrDefault(c => c.Email == login.Email || c.NomeUsuario == login.NomeUsuario && c.Senha == EncriptarSenha(login.Senha));
+            Login log = _loginRepository.Listar().FirstOrDefault(c => c.Email == login.Email && c.Senha == EncriptarSenha(login.Senha));
             if (log != null)
             {
                 ClaimsIdentity identity = new ClaimsIdentity(
@@ -101,6 +108,24 @@ namespace senai.twitter.api.Controllers
             
         }
         
+        [Route("historico/{Id}")]
+        [HttpGet]
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult Historico(int Id)
+        {
+            var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
+            var retorno = new {
+                Atualizacoes = usuario.QtdAtualizacoes,
+                rotaPesquisadas = usuario.RotasPesquisadas.Count(),
+                rotasRealizadas = usuario.RotasRealizadas.Count(),
+                Avaliacoes = usuario.Avaliacoes.Count()
+            };
+
+            if(usuario != null)
+                return Ok(retorno);
+            else
+                return NotFound("Não existe nenhum usuario com esse Id cadastrado.");
+        }
         
         /// <summary>
         /// Busca todos os logins na base de dados
@@ -112,7 +137,7 @@ namespace senai.twitter.api.Controllers
         public IActionResult Buscar()
         {
             try {
-                var logins = _loginRepository.Listar(new string[]{"Perfil","RotasPesquisas"});
+                var logins = _loginRepository.Listar(new string[]{"Perfil"});
                 return Ok(logins);
             } 
             catch(Exception ex)
@@ -125,16 +150,14 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// busca um login com o Id passado
         /// </summary>
-        /// <param name="id">Id do login a ser buscado</param>
+        /// <param name="Id">Id do login a ser buscado</param>
         /// <returns>Objeto login com o Id pesquisado</returns>
-        [Route("buscarid/{id}")]
+        [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
-        public IActionResult BuscarPorId(int id)
+        public IActionResult BuscarPorId(int Id)
         {
-            var login = _loginRepository.BuscarPorId(id);
-            var perfil = _perfilRepository.BuscarPorId(id);
-            login.Perfil = perfil;
+            var login = _loginRepository.BuscarPorId(Id, new string[]{"Perfil"});
             if (login != null)
                 return Ok(login);
             else
@@ -204,7 +227,6 @@ namespace senai.twitter.api.Controllers
                 return BadRequest("Erro ao atualizar dados. " + ex.Message);
             }
         }
-
 
         // [Route("deletar")]
         // [HttpDelete]

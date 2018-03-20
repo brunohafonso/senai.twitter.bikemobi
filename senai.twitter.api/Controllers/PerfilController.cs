@@ -30,7 +30,7 @@ namespace senai.twitter.api.Controllers
         [HttpGet]
         [Route("todos")]
         [EnableCors("AllowAnyOrigin")]
-        [Authorize("Bearer")]
+        //[Authorize("Bearer")]
         public IActionResult Buscar()
         {
             try {
@@ -54,9 +54,7 @@ namespace senai.twitter.api.Controllers
         {
             try
             {
-                var perfil = _perfilRepository.BuscarPorId(Id);
-                var login = _loginRepository.BuscarPorId(Id);
-                perfil.Login = login;
+                var perfil = _perfilRepository.BuscarPorId(Id, new string[]{"Login"});
                 if(perfil != null)
                     return Ok(perfil);
                 else

@@ -14,11 +14,14 @@ namespace senai.twitter.api.Controllers
         private IBaseRepository<Perfil> _perfilRepository;
         private IBaseRepository<RotaPesquisada> _rotaPesquisadaRepository;
 
-        public RotaPesquisadaController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository)
+        private IBaseRepository<RotaRealizada> _rotaRealizadaRepository;
+
+        public RotaPesquisadaController(IBaseRepository<Login> loginRepository,IBaseRepository<Perfil> perfilRepository, IBaseRepository<RotaPesquisada> rotaPesquisadaRepository,IBaseRepository<RotaRealizada> rotaRealizadaRepository)
         {
             _loginRepository = loginRepository;
             _perfilRepository = perfilRepository;
             _rotaPesquisadaRepository = rotaPesquisadaRepository;
+            _rotaRealizadaRepository = rotaRealizadaRepository;
         }
         
         
@@ -33,7 +36,7 @@ namespace senai.twitter.api.Controllers
         {
             try
             {
-                var rotas = _rotaPesquisadaRepository.Listar();
+                var rotas = _rotaPesquisadaRepository.Listar(new string[]{"RotaRealizada"});
                 return Ok(rotas);
             }
             catch(Exception ex)
@@ -45,14 +48,14 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Efetua a busca das rotas pesquisadas por um usuário com o id pesquisado
         /// </summary>
-        /// <param name="id">Id do login que serão buscadas as rotas pesquisadas</param>
+        /// <param name="Id">Id do login que serão buscadas as rotas pesquisadas</param>
         /// <returns>Objeto buscado caso exista algum registro com Id persquisado</returns>
-        [Route("buscarid/{id}")]
+        [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
-        public IActionResult BuscarPorId(int id)
+        public IActionResult BuscarPorId(int Id)
         {
-            var rotas = _rotaPesquisadaRepository.Listar().Where(c => c.IdLogin == id);
+            var rotas = _rotaPesquisadaRepository.Listar(new string[]{"RotaRealizada"}).Where(c => c.IdLogin == Id);
             if (rotas.Count() > 0)
                 return Ok(rotas);
             else
