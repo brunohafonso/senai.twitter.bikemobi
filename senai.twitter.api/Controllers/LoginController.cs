@@ -62,7 +62,7 @@ namespace senai.twitter.api.Controllers
         
         public static void EnviarEmail(Login login, string assunto, string mensagem, string htmlmensagem)
         {
-            var client = new SendGridClient("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");
+            var client = new SendGridClient("");
             var from = new EmailAddress("brunohafonso@gmail.com", "BikeMobi Support");
             var subject = assunto;
             var to = new EmailAddress(login.Email, login.NomeUsuario);
