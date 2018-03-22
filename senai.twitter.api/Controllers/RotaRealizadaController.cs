@@ -59,5 +59,33 @@ namespace senai.twitter.api.Controllers
             else
                 return NotFound("não existe nenhuma rota no perfil pesquisado.");
         }
+
+        /// <summary>
+        /// Efetua o cadastro de rotas realizadas
+        /// </summary>
+        /// <param name="rota">Dados da rota conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
+        /// <returns>String informando se o objeto foi cadastrado.</returns>
+        [Route("cadastrar")]
+        [HttpPost]
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult Cadastrar([FromBody] RotaRealizada rota)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            try 
+            {
+                rota.CriadoEm = DateTime.Now;
+                rota.QtdAtualizacoes = 0;
+                rota.AtualizadoPor = null;
+                
+                 _rotaRealizadaRepository.Inserir(rota);
+                return Ok("Rota salva com sucesso.");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao cadastrar rota realizada. " + ex.Message);
+            }
+        }
     }
 }

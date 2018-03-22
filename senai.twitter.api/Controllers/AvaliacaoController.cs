@@ -28,7 +28,7 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// Busca todas as avaliações na base de dados
+        /// Busca todas as avaliações na base de dados.
         /// </summary>
         /// <returns>Lista todas as avaliações realizadas.</returns>
         [Route("todos")]
@@ -38,7 +38,7 @@ namespace senai.twitter.api.Controllers
         {
             try
             {
-                var avaliacoes = _avaliacaoRepository.Listar(new string[]{"Login","RotaRealizada"});
+                var avaliacoes = _avaliacaoRepository.Listar(new string[]{"RotaRealizada"});
                 return Ok(avaliacoes);
             }
             catch(Exception ex)
@@ -49,27 +49,54 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// busca as avaliações com o Id do usuario passado
+        /// busca as avaliações com o Id do usuario passado.
         /// </summary>
-        /// <param name="Id">Id do login onde as avaliações serão buscadas</param>
-        /// <returns>lista de avaliações com o Id pesquisado</returns>
+        /// <param name="Id">Id do login onde as avaliações serão buscadas.</param>
+        /// <returns>lista de avaliações com o Id pesquisado.</returns>
         [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult BuscarPorId(int Id)
         {
-                var avaliacoes = _avaliacaoRepository.Listar(new string[]{"Login","RotaRealizada"}).Where(c => c.IdLogin == Id);
+                var avaliacoes = _avaliacaoRepository.Listar(new string[]{"RotaRealizada"}).Where(c => c.IdLogin == Id);
                 if(avaliacoes.Count() > 0) 
                     return Ok(avaliacoes);
                 else
                     return NotFound("Não existe nenhuma avaliação com  Id deste usuário.");                
         }
 
+        /// <summary>
+        /// Efetua o cadastro de avaliações.
+        /// </summary>
+        /// <param name="avaliacao">Dados da avaliação conforme criterios estabelecidos (precisa receber o objeto inteiro).</param>
+        /// <returns>String informando se o objeto foi cadastrado.</returns>
+        [Route("cadastrar")]
+        [HttpPost]
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult Cadastrar([FromBody] Avaliacao avaliacao)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            try 
+            {
+                avaliacao.CriadoEm = DateTime.Now;
+                avaliacao.QtdAtualizacoes = 0;
+                avaliacao.AtualizadoPor = null;
+                
+                 _avaliacaoRepository.Inserir(avaliacao);
+                return Ok("Avaliação salva com sucesso.");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao cadastrar avaliação de rota. " + ex.Message);
+            }
+        }
         
         /// <summary>
-        /// Efetua a atualização dos dados da avaliação da rota
+        /// Efetua a atualização dos dados da avaliação da rota.
         /// </summary>
-        /// <param name="avaliacao">Dados da avaliação conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
+        /// <param name="avaliacao">Dados da avaliação conforme criterios estabelecidos (precisa receber o objeto inteiro).</param>
         /// <returns>String informando se a avaliação foi atualizada com sucesso.</returns>
         [Route("atualizar")]
         [HttpPut]

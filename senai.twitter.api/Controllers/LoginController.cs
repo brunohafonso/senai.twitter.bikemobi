@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using senai.twitter.domain.Contracts;
 using senai.twitter.domain.Entities;
 using senai.twitter.repository.Repositories;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace senai.twitter.api.Controllers
 {
@@ -18,6 +20,7 @@ namespace senai.twitter.api.Controllers
     public class LoginController : Controller
     {
         
+        public string Dominio = "localhost:5000/";
         private readonly TokenConfigurations _tokenOptions;
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
@@ -55,7 +58,19 @@ namespace senai.twitter.api.Controllers
                 sb.Append(hash[i].ToString("X2"));
             }
             return sb.ToString();
-        }        
+        }
+        
+        public static void EnviarEmail(Login login, string assunto, string mensagem, string htmlmensagem)
+        {
+            var client = new SendGridClient("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");
+            var from = new EmailAddress("brunohafonso@gmail.com", "BikeMobi Support");
+            var subject = assunto;
+            var to = new EmailAddress(login.Email, login.NomeUsuario);
+            var plainTextContent = mensagem;
+            var htmlContent = htmlmensagem;
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = client.SendEmailAsync(msg);
+        }      
 
         /// <summary>
         /// Efetua login
@@ -131,7 +146,16 @@ namespace senai.twitter.api.Controllers
                 {
                     var requisicao = new RequisicaoAlterarSenha(log.Id, log.Email);
                     _requisicaoAlterarSenhaRepository.Inserir(requisicao);
-                    return Ok("Sua alteração de senha foi recebida com sucesso, em breve você receberá um email cons as intruções para alteração da senha.");
+
+                    var ultimaRequisicao = _requisicaoAlterarSenhaRepository.Listar().Where(c => c.IdLogin == log.Id).Last(); 
+
+                    string link = Dominio + $"api/cadastro/resetarsenha/{ultimaRequisicao.Id}";
+
+                    string mensagem = "Pronto para escolher sua senha? \n Refefinir Senha \n (Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)";
+                    string htmlmensagem = $"<h1>Pronto para escolher sua senha?</h1> \n {link} \n <h2>(Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)</h2>";
+
+                    EnviarEmail(log, "Redefina sua senha do BikeMobi", mensagem, htmlmensagem);
+                    return Ok("Sua alteração de senha foi recebida com sucesso, em breve você receberá um email com as instruções para alteração da senha.");
                 }
                 catch(Exception ex)
                 {
@@ -192,24 +216,33 @@ namespace senai.twitter.api.Controllers
         // [Route("teste")]
         // public IActionResult teste([FromBody] string token)
         // {
-        //     var validationParameters = new TokenValidationParameters()
-        //     {
-        //         ValidIssuer = _tokenOptions.Issuer,
-        //         ValidAudience = _tokenOptions.Audience,
-        //         IssuerSigningKey = _tokenOptions.SigningKey,
-        //         RequireExpirationTime = true
-        //     };
+        //     // var validationParameters = new TokenValidationParameters()
+        //     // {
+        //     //     ValidIssuer = _tokenOptions.Issuer,
+        //     //     ValidAudience = _tokenOptions.Audience,
+        //     //     IssuerSigningKey = _tokenOptions.SigningKey,
+        //     //     RequireExpirationTime = true
+        //     // };
 
-        //     var tokenHandler = new JwtSecurityTokenHandler();
-        //     SecurityToken securityToken = null;
+        //     // var tokenHandler = new JwtSecurityTokenHandler();
+        //     // SecurityToken securityToken = null;
+
+        //     // try
+        //     // {
+        //     //     return Ok(tokenHandler.ValidateToken(token, validationParameters, out securityToken));
+        //     // }
+        //     // catch(Exception ex)
+        //     // {
+        //     //     return BadRequest("Token Invalido. " + ex.Message);
+        //     // }
 
         //     try
         //     {
-        //         return Ok(tokenHandler.ValidateToken(token, validationParameters, out securityToken));
+        //         return Ok();
         //     }
         //     catch(Exception ex)
         //     {
-        //         return BadRequest("Token Invalido. " + ex.Message);
+        //         return BadRequest("erro ao enviar email. " + ex.Message);
         //     }
         // }
 

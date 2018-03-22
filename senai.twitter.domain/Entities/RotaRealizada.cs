@@ -50,6 +50,7 @@ namespace senai.twitter.domain.Entities
             this.LngInicio = LngInicio;
             this.LatInicio = LatInicio;
             this.LatFim = LatFim;
+            this.LngFim = LngFim;
             this.DuracaoString = DuracaoString;
             this.DuracaoInt = DuracaoInt;
             this.Kilometros = Kilometros;

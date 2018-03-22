@@ -66,7 +66,7 @@ namespace senai.twitter.api.Controllers
         /// Efetua o cadastro de rotas pesquisadas
         /// </summary>
         /// <param name="rota">Dados da rota conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
-        /// <returns>String informando qual objeto foi cadastrado.</returns>
+        /// <returns>String informando se o objeto foi cadastrado.</returns>
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
@@ -82,7 +82,7 @@ namespace senai.twitter.api.Controllers
                 rota.AtualizadoPor = null;
                 
                 _rotaPesquisadaRepository.Inserir(rota);
-                return Ok();
+                return Ok("Rota salva com sucesso.");
             }
             catch(Exception ex)
             {

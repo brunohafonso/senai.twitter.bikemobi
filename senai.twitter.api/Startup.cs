@@ -35,7 +35,13 @@ namespace senai.twitter.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+             services.AddCors(options => {
+                options.AddPolicy("AllowAnyOrigin", builder => {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                });
+            });
 
             var signingConfigurations = new SigningConfigurations();
             services.AddSingleton(signingConfigurations);
@@ -67,9 +73,7 @@ namespace senai.twitter.api
                 c.SwaggerDoc("v1", new Info {
                     Version = "V1",
                     Title = "BikeMobi API",
-                    Description = "Documentação de uso da BikeMobi API",
-                    TermsOfService = "None",
-                    Contact = new Contact{Name = "Bruno Afonso", Email = "brunohafonso@gmail.com", Url = "https://www.linkedin.com/in/bruno-henrique-afonso-6028a4149/"}
+                    Description = "Documentação de uso da BikeMobi API"
                 });
 
                 var basePath = AppContext.BaseDirectory;
@@ -98,12 +102,7 @@ namespace senai.twitter.api
 
                 app.UseAuthentication();
                 
-                app.UseCors(x =>
-                {
-                    x.AllowAnyHeader();
-                    x.AllowAnyMethod();
-                    x.AllowAnyOrigin();
-                });
+                app.UseCors("AllowAnyOrigin");
                 
                 app.UseMvc();
 
