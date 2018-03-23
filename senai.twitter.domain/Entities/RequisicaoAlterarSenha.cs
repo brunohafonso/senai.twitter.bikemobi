@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace senai.twitter.domain.Entities
 {
-    public class RequisicaoAlterarSenha
+    public class RequisicaoAlterarSenha : Base
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,6 +16,9 @@ namespace senai.twitter.domain.Entities
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+
+        [Required]
+        public string Status { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
@@ -30,6 +33,10 @@ namespace senai.twitter.domain.Entities
             this.IdLogin = IdLogin;
             this.Email = Email;
             this.Expiracao = DateTime.Now.Add(new TimeSpan(0,0,30,0));
+            this.Status = "Ativo";
+            this.CriadoEm = DateTime.Now; 
+            this.QtdAtualizacoes = 0;
+            this.AtualizadoPor = null;
         }
     }
 }

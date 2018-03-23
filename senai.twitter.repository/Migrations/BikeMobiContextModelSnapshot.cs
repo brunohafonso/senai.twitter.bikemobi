@@ -135,12 +135,23 @@ namespace senai.twitter.repository.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<DateTime>("AtualizadoEm");
+
+                    b.Property<string>("AtualizadoPor");
+
+                    b.Property<DateTime>("CriadoEm");
+
                     b.Property<string>("Email")
                         .IsRequired();
 
                     b.Property<DateTime>("Expiracao");
 
                     b.Property<int>("IdLogin");
+
+                    b.Property<int>("QtdAtualizacoes");
+
+                    b.Property<string>("Status")
+                        .IsRequired();
 
                     b.HasKey("Id");
 

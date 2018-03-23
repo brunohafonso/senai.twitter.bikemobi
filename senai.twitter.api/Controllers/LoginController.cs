@@ -149,6 +149,22 @@ namespace senai.twitter.api.Controllers
 
                     var ultimaRequisicao = _requisicaoAlterarSenhaRepository.Listar().Where(c => c.IdLogin == log.Id).Last(); 
 
+                    var requisicoesAntigas = _requisicaoAlterarSenhaRepository.Listar().Where(r => r.IdLogin == log.Id && r.Id != ultimaRequisicao.Id);
+
+                    if(requisicoesAntigas != null)
+                        foreach(var item in requisicoesAntigas)
+                        {
+                            if(item.Status == "Ativo")
+                            {
+                                item.Status = "Expirado";
+                                item.AtualizadoEm = DateTime.Now;
+                                item.AtualizadoPor = log.NomeUsuario;
+                                item.QtdAtualizacoes = item.QtdAtualizacoes + 1; 
+                                _requisicaoAlterarSenhaRepository.Atualizar(item);
+                            }
+                        }
+
+
                     string link = Dominio + $"api/cadastro/resetarsenha/{ultimaRequisicao.Id}";
 
                     string mensagem = "Pronto para escolher sua senha? \n Refefinir Senha \n (Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)";
@@ -184,8 +200,19 @@ namespace senai.twitter.api.Controllers
             if(expirada <= 0) 
                 try
                 {
-                    _requisicaoAlterarSenhaRepository.Deletar(requisicao);
-                    return Ok("Requisição de alteração de senha expirada.");
+                    if(requisicao.Status == "Ativo")
+                    {
+                        requisicao.Status = "Expirado";
+                        requisicao.AtualizadoEm = DateTime.Now;
+                        requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
+                        requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
+                        _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
+                        return Ok("Requisição de alteração de senha expirada.");
+                    }
+                    else
+                    {
+                        return Ok("Requisição de alteração de senha expirada.");
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -200,15 +227,18 @@ namespace senai.twitter.api.Controllers
 
             try 
             {
-                _requisicaoAlterarSenhaRepository.Deletar(requisicao);
+                requisicao.Status = "Realizada";
+                requisicao.AtualizadoEm = DateTime.Now;
+                requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
+                requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
+                _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
                 _loginRepository.Atualizar(log);
                 return Ok("Senha alterada com sucesso.");
             }
             catch(Exception ex)
             {
                 return BadRequest("Erro ao finalizar a alteração de senha. " + ex.Message);
-            }
-            
+            }   
         }
 
         
