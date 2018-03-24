@@ -211,42 +211,6 @@ namespace senai.twitter.api.Controllers
             
         }
 
-        
-        // [HttpPost]
-        // [Route("teste")]
-        // public IActionResult teste([FromBody] string token)
-        // {
-        //     // var validationParameters = new TokenValidationParameters()
-        //     // {
-        //     //     ValidIssuer = _tokenOptions.Issuer,
-        //     //     ValidAudience = _tokenOptions.Audience,
-        //     //     IssuerSigningKey = _tokenOptions.SigningKey,
-        //     //     RequireExpirationTime = true
-        //     // };
-
-        //     // var tokenHandler = new JwtSecurityTokenHandler();
-        //     // SecurityToken securityToken = null;
-
-        //     // try
-        //     // {
-        //     //     return Ok(tokenHandler.ValidateToken(token, validationParameters, out securityToken));
-        //     // }
-        //     // catch(Exception ex)
-        //     // {
-        //     //     return BadRequest("Token Invalido. " + ex.Message);
-        //     // }
-
-        //     try
-        //     {
-        //         return Ok();
-        //     }
-        //     catch(Exception ex)
-        //     {
-        //         return BadRequest("erro ao enviar email. " + ex.Message);
-        //     }
-        // }
-
-
         /// <summary>
         /// Retorna dados do historico do usuário
         /// </summary>

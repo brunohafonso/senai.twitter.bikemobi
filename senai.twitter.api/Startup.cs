@@ -60,6 +60,9 @@ namespace senai.twitter.api
                 parametrosValidacao.ValidAudience = tokenConfigurations.Audience;
                 parametrosValidacao.ValidIssuer = tokenConfigurations.Issuer;
                 parametrosValidacao.ValidateIssuerSigningKey = true;
+                parametrosValidacao.RequireExpirationTime = true;
+                parametrosValidacao.ValidateLifetime = true;
+                parametrosValidacao.ClockSkew = TimeSpan.Zero;
             });
 
             services.AddAuthorization(auth => {
@@ -99,8 +102,6 @@ namespace senai.twitter.api
                 {
                     app.UseDeveloperExceptionPage();
                 }
-
-                app.UseAuthentication();
                 
                 app.UseCors("AllowAnyOrigin");
                 
