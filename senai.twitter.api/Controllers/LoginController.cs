@@ -75,14 +75,14 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Efetua login
         /// </summary>
-        /// <param name="login">Email e Senha do usuário.</param>
+        /// <param name="login">Email ou Nome do usuário e Senha do usuário.</param>
         /// <returns>Dados do token caso a autenticação tenha dado sucesso.</returns>
         [Route("login")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult Logar([FromBody] Login login, [FromServices] SigningConfigurations signingConfigurations, [FromServices] TokenConfigurations tokenConfigurations)
         {
-            Login log = _loginRepository.Listar().FirstOrDefault(c => c.Email == login.Email && c.Senha == EncriptarSenha(login.Senha));
+            Login log = _loginRepository.Listar().FirstOrDefault(c => (c.Email == login.Email || c.NomeUsuario == login.NomeUsuario) && c.Senha == EncriptarSenha(login.Senha));
             if (log != null)
             {
                 ClaimsIdentity identity = new ClaimsIdentity(
@@ -104,7 +104,9 @@ namespace senai.twitter.api.Controllers
                     Issuer = tokenConfigurations.Issuer,
                     Audience = tokenConfigurations.Audience,
                     SigningCredentials = signingConfigurations.SigningCredentials,
-                    Subject = identity
+                    Subject = identity,
+                    NotBefore = dataCriacao,
+                    Expires = dataExpiracao
                 });
 
                 var token = handler.WriteToken(securityToken);
@@ -146,13 +148,26 @@ namespace senai.twitter.api.Controllers
                 {
                     var requisicao = new RequisicaoAlterarSenha(log.Id, log.Email);
                     _requisicaoAlterarSenhaRepository.Inserir(requisicao);
+                    var requisicoesAntigas = _requisicaoAlterarSenhaRepository.Listar().Where(r => r.IdLogin == log.Id && r.Id != requisicao.Id);
 
-                    var ultimaRequisicao = _requisicaoAlterarSenhaRepository.Listar().Where(c => c.IdLogin == log.Id).Last(); 
+                    if(requisicoesAntigas != null)
+                        foreach(var item in requisicoesAntigas)
+                        {
+                            if(item.Status == "Ativo")
+                            {
+                                item.Status = "Expirado";
+                                item.AtualizadoEm = DateTime.Now;
+                                item.AtualizadoPor = log.NomeUsuario;
+                                item.QtdAtualizacoes = item.QtdAtualizacoes + 1; 
+                                _requisicaoAlterarSenhaRepository.Atualizar(item);
+                            }
+                        }
 
-                    string link = Dominio + $"api/cadastro/resetarsenha/{ultimaRequisicao.Id}";
 
-                    string mensagem = "Pronto para escolher sua senha? \n Refefinir Senha \n (Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)";
-                    string htmlmensagem = $"<h1>Pronto para escolher sua senha?</h1> \n {link} \n <h2>(Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)</h2>";
+                    string link = Dominio + $"'api/cadastro/resetarsenha/{requisicao.Id}'";
+
+                    string mensagem = $"Olá, {log.NomeUsuario}, Pronto para escolher sua senha? \n Refefinir Senha \n (Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)";
+                    string htmlmensagem = $"<div style='font-family: Helvetica,Arial,sans-serif; max-width: 650px; margin: auto;'><img width='212px' height='72px' src='http://bike-mobi.herokuapp.com/static/media/logoBikeMobi.9f5f6ad8.png'/><h1>Pronto para escolher sua senha?</h1> <a style='cursor: pointer; text-align: center; border-radius: 4px; background-color: #5db8fc; text-decoration: none; font-size: 25px; font-weight: bold; color: #fff; width: 400px; margin: auto; padding: 5px 10px' href={link}>Redefinir Senha</a><h2>(Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)</h2></div>";
 
                     EnviarEmail(log, "Redefina sua senha do BikeMobi", mensagem, htmlmensagem);
                     return Ok("Sua alteração de senha foi recebida com sucesso, em breve você receberá um email com as instruções para alteração da senha.");
@@ -184,8 +199,19 @@ namespace senai.twitter.api.Controllers
             if(expirada <= 0) 
                 try
                 {
-                    _requisicaoAlterarSenhaRepository.Deletar(requisicao);
-                    return Ok("Requisição de alteração de senha expirada.");
+                    if(requisicao.Status == "Ativo")
+                    {
+                        requisicao.Status = "Expirado";
+                        requisicao.AtualizadoEm = DateTime.Now;
+                        requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
+                        requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
+                        _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
+                        return Ok("Requisição de alteração de senha expirada.");
+                    }
+                    else
+                    {
+                        return Ok("Requisição de alteração de senha expirada.");
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -200,15 +226,18 @@ namespace senai.twitter.api.Controllers
 
             try 
             {
-                _requisicaoAlterarSenhaRepository.Deletar(requisicao);
+                requisicao.Status = "Realizada";
+                requisicao.AtualizadoEm = DateTime.Now;
+                requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
+                requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
+                _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
                 _loginRepository.Atualizar(log);
                 return Ok("Senha alterada com sucesso.");
             }
             catch(Exception ex)
             {
                 return BadRequest("Erro ao finalizar a alteração de senha. " + ex.Message);
-            }
-            
+            }   
         }
 
         /// <summary>
@@ -230,7 +259,7 @@ namespace senai.twitter.api.Controllers
 
                 var avaliacoes = _avaliacaoRepository.Listar().Where(c => c.IdLogin == Id);
 
-                var tempoTrajetos = 0;
+                long tempoTrajetos = 0;
 
                 foreach(var item in rotasRealizadas)
                 {

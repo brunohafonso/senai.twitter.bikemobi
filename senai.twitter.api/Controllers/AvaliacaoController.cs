@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
@@ -117,6 +118,49 @@ namespace senai.twitter.api.Controllers
             catch(Exception ex)
             {
                 return BadRequest("Erro ao atualizar avaliação. " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Busca os dados necessários para gerar gráficos das condições do sistema cicloviário de acordo com as avaliações dos usuários.
+        /// </summary>
+        /// <returns>Dados necessários para gerar gráficos das condições do sistema cicloviário de acordo com as avaliações dos usuários.</returns>
+        [Route("graficos")]
+        [HttpGet]
+        [AllowAnonymous]
+        [EnableCors("AllowAnyOrigin")]
+        public IActionResult Graficos()
+        {
+            try 
+            {
+                var avaliacoesRuinsCiclovias = _avaliacaoRepository.Listar().Where(a => a.AvTrajeto < 3).Count();
+                var avaliacoesRestoCiclovias = _avaliacaoRepository.Listar().Where(a => a.AvTrajeto >= 3).Count();
+                string labelRuimCiclovias = "Ruim ou Muito Ruim";
+                string labelRestoCiclovias = "Outras Opiniões";
+
+                var avaliacoesRuinsSeguranca = _avaliacaoRepository.Listar().Where(a => a.AvTrajeto < 3).Count();
+                var avaliacoesRestoSeguranca = _avaliacaoRepository.Listar().Where(a => a.AvTrajeto >= 3).Count();
+                string labelRuimSeguranca = "Ruim ou Muito Ruim";
+                string labelRestoSeguranca = "Outras Opiniões";
+                
+                var totalAvaliacoes = _avaliacaoRepository.Listar().Count();
+
+                var retorno = new {
+                    avaliacoesRuinsCiclovias = avaliacoesRuinsCiclovias,
+                    avaliacoesRestoCiclovias = avaliacoesRestoCiclovias,
+                    labelRuimCiclovias = labelRuimCiclovias,
+                    labelRestoCiclovias = labelRestoCiclovias,
+                    avaliacoesRuinsSeguranca = avaliacoesRuinsSeguranca,
+                    avaliacoesRestoSeguranca = avaliacoesRestoSeguranca,
+                    labelRuimSeguranca = labelRuimSeguranca,
+                    labelRestoSeguranca = labelRestoSeguranca,
+                    totalAvaliacoes = totalAvaliacoes
+                };
+                return Ok(retorno);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest("Erro ao buscar dados no banco. " + ex.Message);
             }
         }
     }

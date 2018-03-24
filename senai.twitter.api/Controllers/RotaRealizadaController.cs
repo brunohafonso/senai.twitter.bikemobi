@@ -80,7 +80,12 @@ namespace senai.twitter.api.Controllers
                 rota.AtualizadoPor = null;
                 
                  _rotaRealizadaRepository.Inserir(rota);
-                return Ok("Rota salva com sucesso.");
+                var retorno = new {
+                    ultimoIdCadastrado = rota.Id,
+                    mensagem = "Rota salva com sucesso."
+                };
+
+                return Ok(retorno);
             }
             catch(Exception ex)
             {
