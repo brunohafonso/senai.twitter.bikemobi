@@ -22,7 +22,7 @@ namespace senai.twitter.domain.Entities
         public string DuracaoString { get; set; }
 
         [Required]
-        public long DuracaoInt { get; set; }
+        public int DuracaoInt { get; set; }
 
         [Required]
         public int Kilometros { get; set; }

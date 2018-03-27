@@ -62,7 +62,7 @@ namespace senai.twitter.api.Controllers
         
         public static void EnviarEmail(Login login, string assunto, string mensagem, string htmlmensagem)
         {
-            var client = new SendGridClient("");
+            var client = new SendGridClient("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");
             var from = new EmailAddress("brunohafonso@gmail.com", "BikeMobi Support");
             var subject = assunto;
             var to = new EmailAddress(login.Email, login.NomeUsuario);
@@ -272,7 +272,7 @@ namespace senai.twitter.api.Controllers
                     QtdAtualizacoesPerfil = usuario.Perfil.QtdAtualizacoes,
                     ultimaAtualizacaoPerfil = usuario.Perfil.AtualizadoEm,
                     rotaPesquisadas = rotasPesquisadas.Count(),
-                    dataUltimaPesquisa = rotasPesquisadas.Last().CriadoEm,
+                    dataUltimaPesquisada = rotasPesquisadas.Last().CriadoEm,
                     QtdRotasRealizadas = rotasRealizadas.Count(),
                     dataUltimaRotaRealizada = rotasRealizadas.Last().CriadoEm,
                     QtdAvaliacoes = avaliacoes.Count(),

@@ -213,7 +213,7 @@ namespace senai.twitter.repository.Migrations
 
                     b.Property<DateTime>("CriadoEm");
 
-                    b.Property<long>("DuracaoInt");
+                    b.Property<int>("DuracaoInt");
 
                     b.Property<string>("DuracaoString")
                         .IsRequired();
