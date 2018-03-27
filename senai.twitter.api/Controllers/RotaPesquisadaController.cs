@@ -26,9 +26,55 @@ namespace senai.twitter.api.Controllers
         
         
         /// <summary>
-        /// Busca todas as pesquisas na base de dados
+        /// Busca todas as pesquisas de rotas na base de dados.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        /// 
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/RotaPesquisada/todos
+        /// 
+        ///     {
+        ///         "distancia": 0,
+        ///         "duracao": "string",
+        ///         "destinoEnd": "string",
+        ///         "destinoLat": 0,
+        ///         "destinoLng": 0,
+        ///         "origemEnd": "string",
+        ///         "origemLat": 0,
+        ///         "origemLng": 0,
+        ///         "polylinePoints": "string",
+        ///         "login": null,
+        ///         "idLogin": 0,
+        ///         "rotaRealizada": {
+        ///             "latInicio": 0,
+        ///             "lngInicio": 0,
+        ///             "latFim": 0,
+        ///             "lngFim": 0,
+        ///             "duracaoString": "string",
+        ///             "duracaoInt": 0,
+        ///             "kilometros": 0,
+        ///             "login": null,
+        ///             "idLogin": 0,
+        ///             "idRotaPesquisada": 0,
+        ///             "avaliacao": null,
+        ///             "id": 0,
+        ///             "atualizadoEm": "0001-01-01T00:00:00",
+        ///             "atualizadoPor": null,
+        ///             "criadoEm": "2018-03-25T16:11:23.9320365",
+        ///             "qtdAtualizacoes": 0
+        ///         },
+        ///         "id": 0,
+        ///         "atualizadoEm": "0001-01-01T00:00:00",
+        ///         "atualizadoPor": null,
+        ///         "criadoEm": "2018-03-25T16:11:23.9309983",
+        ///         "qtdAtualizacoes": 0
+        ///     }
+        /// 
+        /// </remarks>
         /// <returns>Lista todas as pesquisas realizadas.</returns>
+        /// <response code="200"> Retorna lista com todas as pesquisas de rotas na base de dados.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
+        /// <response code="404"> Nenhuma rota pesquisada cadastrada.</response>
         [Route("todos")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
@@ -37,6 +83,8 @@ namespace senai.twitter.api.Controllers
             try
             {
                 var rotas = _rotaPesquisadaRepository.Listar(new string[]{"RotaRealizada"});
+                if(rotas.Count() < 1) return NotFound("Nenhuma rota pesquisada cadastrada.");
+
                 return Ok(rotas);
             }
             catch(Exception ex)
@@ -46,10 +94,55 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// Efetua a busca das rotas pesquisadas por um usuário com o id pesquisado
+        /// Efetua a busca das rotas pesquisadas por um usuário com o id pesquisado.
         /// </summary>
-        /// <param name="Id">Id do login que serão buscadas as rotas pesquisadas</param>
-        /// <returns>Objeto buscado caso exista algum registro com Id persquisado</returns>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        /// 
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/RotaPesquisada/buscarid/{Id}
+        /// 
+        ///     {
+        ///         "distancia": 0,
+        ///         "duracao": "string",
+        ///         "destinoEnd": "string",
+        ///         "destinoLat": 0,
+        ///         "destinoLng": 0,
+        ///         "origemEnd": "string",
+        ///         "origemLat": 0,
+        ///         "origemLng": 0,
+        ///         "polylinePoints": "string",
+        ///         "login": null,
+        ///         "idLogin": 0,
+        ///         "rotaRealizada": {
+        ///             "latInicio": 0,
+        ///             "lngInicio": 0,
+        ///             "latFim": 0,
+        ///             "lngFim": 0,
+        ///             "duracaoString": "string",
+        ///             "duracaoInt": 0,
+        ///             "kilometros": 0,
+        ///             "login": null,
+        ///             "idLogin": 0,
+        ///             "idRotaPesquisada": 0,
+        ///             "avaliacao": null,
+        ///             "id": 0,
+        ///             "atualizadoEm": "0001-01-01T00:00:00",
+        ///             "atualizadoPor": null,
+        ///             "criadoEm": "2018-03-25T16:11:23.9320365",
+        ///             "qtdAtualizacoes": 0
+        ///         },
+        ///         "id": 0,
+        ///         "atualizadoEm": "0001-01-01T00:00:00",
+        ///         "atualizadoPor": null,
+        ///         "criadoEm": "2018-03-25T16:11:23.9309983",
+        ///         "qtdAtualizacoes": 0
+        ///     }
+        /// 
+        /// </remarks>
+        /// <param name="Id">Id do login que serão buscadas as rotas pesquisadas.</param>
+        /// <returns>Objeto buscado caso exista algum registro com Id persquisado.</returns>
+        /// <response code="200"> Retorna lista com todas as pesquisas de rotas na base de dados com base no Id pesquisado.</response>
+        /// <response code="404"> Nenhuma rota pesquisada cadastrada.</response>
         [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
@@ -63,10 +156,31 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// Efetua o cadastro de rotas pesquisadas
+        /// Efetua o cadastro de rotas pesquisadas.
         /// </summary>
-        /// <param name="rota">Dados da rota conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        /// 
+        ///     POST http://brunohafonso-001-site1.ctempurl.com/api/rotapesquisada/cadastrar
+        /// 
+        ///     {
+	    ///         "distancia": 0,
+	    ///         "duracao": "string",
+	    ///         "destinoEnd": "string",
+	    ///         "destinoLat": 0,
+	    ///         "destinoLng": 0,
+	    ///         "origemEnd": "string",
+	    ///         "origemLat": 0,
+	    ///         "origemLng": 0,
+	    ///         "polylinePoints": "string",
+	    ///         "idLogin": 0
+	    ///     }
+        /// 
+        /// </remarks>
+        /// <param name="rota">Dados da rota conforme criterios estabelecidos (precisa receber o objeto inteiro).</param>
         /// <returns>String informando se o objeto foi cadastrado.</returns>
+        /// <response code="200"> Retorna objeto com string informando que rota foi salva com sucesso e o Id do ultimo registro cadastrado.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]

@@ -31,7 +31,47 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Busca todas as avaliações na base de dados.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        ///
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/Avaliacao/todos
+        ///    
+        ///     {
+        ///         "avTrajeto": 0,
+        ///         "avSeguranca": 0,
+        ///         "rotaRealizada": {
+        ///             "latInicio": 0,
+        ///             "lngInicio": 0,
+        ///             "latFim": 0,
+        ///             "lngFim": 0,
+        ///             "duracaoString": "string",
+        ///             "duracaoInt": 0,
+        ///             "kilometros": 0,
+        ///             "login": null,
+        ///             "idLogin": 0,
+        ///             "rotaPesquisada": null,
+        ///             "idRotaPesquisada": 1,
+        ///             "id": 0,
+        ///             "atualizadoEm": "0001-01-01T00:00:00",
+        ///             "atualizadoPor": null,
+        ///             "criadoEm": "2018-03-25T16:11:23.9320365",
+        ///             "qtdAtualizacoes": 0
+        ///         },
+        ///         "idRotaRealizada": 0,
+        ///         "login": null,
+        ///         "idLogin": 0,
+        ///         "id": 0,
+        ///         "criadoEm": "2018-03-25T16:11:23.9330105",
+        ///         "atualizadoEm": "0001-01-01T00:00:00",
+        ///         "qtdAtualizacoes": 0,
+        ///         "atualizadoPor": null
+        ///     }
+        /// 
+        /// </remarks>
         /// <returns>Lista todas as avaliações realizadas.</returns>
+        /// <response code="200"> Retorna lista com todas as avaliações realizadas.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
+        /// <response code="404"> Nenhuma avaliação cadastrada.</response>
         [Route("todos")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
@@ -40,6 +80,8 @@ namespace senai.twitter.api.Controllers
             try
             {
                 var avaliacoes = _avaliacaoRepository.Listar(new string[]{"RotaRealizada"});
+                if(avaliacoes.Count() < 1) return NotFound("Nenhuma avaliação cadastrada.");
+
                 return Ok(avaliacoes);
             }
             catch(Exception ex)
@@ -52,8 +94,47 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// busca as avaliações com o Id do usuario passado.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        ///
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/Avaliacao/buscarid/{Id}
+        ///    
+         ///     {
+        ///         "avTrajeto": 0,
+        ///         "avSeguranca": 0,
+        ///         "rotaRealizada": {
+        ///             "latInicio": 0,
+        ///             "lngInicio": 0,
+        ///             "latFim": 0,
+        ///             "lngFim": 0,
+        ///             "duracaoString": "string",
+        ///             "duracaoInt": 0,
+        ///             "kilometros": 0,
+        ///             "login": null,
+        ///             "idLogin": 0,
+        ///             "rotaPesquisada": null,
+        ///             "idRotaPesquisada": 1,
+        ///             "id": 0,
+        ///             "atualizadoEm": "0001-01-01T00:00:00",
+        ///             "atualizadoPor": null,
+        ///             "criadoEm": "2018-03-25T16:11:23.9320365",
+        ///             "qtdAtualizacoes": 0
+        ///         },
+        ///         "idRotaRealizada": 0,
+        ///         "login": null,
+        ///         "idLogin": 0,
+        ///         "id": 0,
+        ///         "criadoEm": "2018-03-25T16:11:23.9330105",
+        ///         "atualizadoEm": "0001-01-01T00:00:00",
+        ///         "qtdAtualizacoes": 0,
+        ///         "atualizadoPor": null
+        ///     }
+        /// 
+        /// </remarks>
         /// <param name="Id">Id do login onde as avaliações serão buscadas.</param>
         /// <returns>lista de avaliações com o Id pesquisado.</returns>
+        /// <response code="200"> Retorna lista com todas as avaliações realizadas com base no Id pesquisado.</response>
+        /// <response code="404"> Nenhuma avaliação cadastrada com esse perfil pesquisado.</response>
         [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
@@ -69,8 +150,23 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Efetua o cadastro de avaliações.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///
+        ///     POST http://brunohafonso-001-site1.ctempurl.com/api/Avaliacao/cadastrar
+        ///    
+        ///     {
+        ///         "avTrajeto": 0,
+        ///         "avSeguranca": 0,
+        ///         "idRotaRealizada": 0,
+        ///         "idLogin": 0       
+        ///     }
+        /// 
+        /// </remarks>
         /// <param name="avaliacao">Dados da avaliação conforme criterios estabelecidos (precisa receber o objeto inteiro).</param>
         /// <returns>String informando se o objeto foi cadastrado.</returns>
+        /// <response code="200"> Retorna string informando que a avaliação foi cadastrada com sucesso.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
@@ -97,8 +193,24 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Efetua a atualização dos dados da avaliação da rota.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///
+        ///     PUT http://brunohafonso-001-site1.ctempurl.com/api/Avaliacao/atualizar
+        ///     
+        ///     {
+        ///         "avTrajeto": 0,
+        ///         "avSeguranca": 0,
+        ///         "idRotaRealizada": 0,
+        ///         "idLogin": 0,
+        ///         "qtdAtualizacoes": 0
+        ///     }
+        /// 
+        /// </remarks>
         /// <param name="avaliacao">Dados da avaliação conforme criterios estabelecidos (precisa receber o objeto inteiro).</param>
         /// <returns>String informando se a avaliação foi atualizada com sucesso.</returns>
+        /// <response code="200"> Retorna string informando que a avaliação foi atualizada com sucesso.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
         [Route("atualizar")]
         [HttpPut]
         [EnableCors("AllowAnyOrigin")]
@@ -111,6 +223,7 @@ namespace senai.twitter.api.Controllers
             {
                 avaliacao.AtualizadoEm = DateTime.Now;
                 avaliacao.QtdAtualizacoes = avaliacao.QtdAtualizacoes + 1;
+                avaliacao.AtualizadoPor = _loginRepository.Listar().FirstOrDefault(c => c.Id == avaliacao.IdLogin).NomeUsuario;
 
                 _avaliacaoRepository.Atualizar(avaliacao);
                 return Ok("Avaliação atualizada com sucesso. ");
@@ -124,7 +237,27 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Busca os dados necessários para gerar gráficos das condições do sistema cicloviário de acordo com as avaliações dos usuários.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        /// 
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/Avaliacao/graficos
+        /// 
+        ///     {
+        ///         "avaliacoesRuinsCiclovias": 0,
+        ///         "avaliacoesRestoCiclovias": 0,
+        ///         "labelRuimCiclovias": "string",
+        ///         "labelRestoCiclovias": "string",
+        ///         "avaliacoesRuinsSeguranca": 0,
+        ///         "avaliacoesRestoSeguranca": 0,
+        ///         "labelRuimSeguranca": "string",
+        ///         "labelRestoSeguranca": "string",
+        ///         "totalAvaliacoes": 0
+        ///     }
+        /// 
+        /// </remarks>
         /// <returns>Dados necessários para gerar gráficos das condições do sistema cicloviário de acordo com as avaliações dos usuários.</returns>
+        /// <response code="200"> Retorna objeto com dados sobre as avaliações dos usuários.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
         [Route("graficos")]
         [HttpGet]
         [AllowAnonymous]
@@ -156,6 +289,7 @@ namespace senai.twitter.api.Controllers
                     labelRestoSeguranca = labelRestoSeguranca,
                     totalAvaliacoes = totalAvaliacoes
                 };
+
                 return Ok(retorno);
             }
             catch(Exception ex)

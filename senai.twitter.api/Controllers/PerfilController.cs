@@ -27,9 +27,9 @@ namespace senai.twitter.api.Controllers
         /// Busca todos os registros de perfis cadastrados.
         /// </summary>
         /// <remarks>
-        /// Exemplo de retorno:
+        /// Exemplo de Retorno:
         /// 
-        ///     GET http://localhost:5000/api/Perfil/todos
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/Perfil/todos
         ///     
         ///     {
         ///         "nome": "string",
@@ -82,9 +82,9 @@ namespace senai.twitter.api.Controllers
         /// Retorna dados do Login juntamente com os dados básicos do perfil buscado pelo Id.
         /// </summary>
         /// <remarks>
-        /// Exemplo de retorno:
+        /// Exemplo de Retorno:
         /// 
-        ///     GET http://localhost:5000/api/Perfil/buscarid/{Id}
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/Perfil/buscarid/{Id}
         ///     
         ///     {
         ///         "nome": "string",
@@ -143,9 +143,9 @@ namespace senai.twitter.api.Controllers
         /// Efetua a atualização dos dados do Login juntamente com os dados básicos do perfil
         /// </summary>
         /// <remarks>
-        /// Exemplo de requisição:
+        /// Exemplo de Requisição:
         /// 
-        ///     GET http://localhost:5000/api/Perfil/atualizar
+        ///     PUT http://brunohafonso-001-site1.ctempurl.com/api/Perfil/atualizar
         ///     
         ///     {
         ///         "nome": "string",
@@ -154,8 +154,9 @@ namespace senai.twitter.api.Controllers
         ///         "cidade": "string",
         ///         "bio": "string",
         ///         "avatarUrl": "string",
+        ///         "idLogin": 0,
         ///         "id": 0,
-        ///         "qtdAtualizacoes": 0,
+        ///         "qtdAtualizacoes": 0
         ///     }
         /// 
         /// </remarks>

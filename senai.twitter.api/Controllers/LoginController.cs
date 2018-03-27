@@ -62,7 +62,7 @@ namespace senai.twitter.api.Controllers
         
         public static void EnviarEmail(Login login, string assunto, string mensagem, string htmlmensagem)
         {
-            var client = new SendGridClient("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");
+            var client = new SendGridClient("");
             var from = new EmailAddress("brunohafonso@gmail.com", "BikeMobi Support");
             var subject = assunto;
             var to = new EmailAddress(login.Email, login.NomeUsuario);
@@ -78,7 +78,7 @@ namespace senai.twitter.api.Controllers
         /// <remarks>
         /// Exemplo de Requisição:
         ///
-        ///     POST http://localhost:5000/api/cadastro/login
+        ///     POST http://brunohafonso-001-site1.ctempurl.com/api/cadastro/login
         ///    
         ///     {
         ///         "nomeUsuario": "string",
@@ -145,7 +145,7 @@ namespace senai.twitter.api.Controllers
             var retornoerro = new
             {
                 autenticacao = false,
-                message = "Falha na Autenticação"
+                message = "Falha na Autenticação: Email e/ou senha incorretos."
             };
 
             return BadRequest(retornoerro);
@@ -158,7 +158,7 @@ namespace senai.twitter.api.Controllers
         /// <remarks>
         /// Exemplo de Requisição:
         ///
-        ///     POST http://localhost:5000/api/cadastro/esqueciminhasenha
+        ///     POST http://brunohafonso-001-site1.ctempurl.com/api/cadastro/esqueciminhasenha
         ///    
         ///     {
         ///         "email": "string",
@@ -220,7 +220,7 @@ namespace senai.twitter.api.Controllers
         /// <remarks>
         /// Exemplo de Requisição:
         ///
-        ///     POST http://localhost:5000/api/cadastro/resetarsenha/{Id}
+        ///     POST http://brunohafonso-001-site1.ctempurl.com/api/cadastro/resetarsenha/{Id}
         ///    
         ///     {
         ///         "senha": "string"
@@ -293,7 +293,7 @@ namespace senai.twitter.api.Controllers
         /// <remarks>
         /// Exemplo de Retorno:
         ///
-        ///     GET http://localhost:5000/api/cadastro/historico/{Id}
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/cadastro/historico/{Id}
         ///    
         ///     {
         ///         "qtdAtualizacoesLogin": 0,
@@ -403,7 +403,7 @@ namespace senai.twitter.api.Controllers
         /// <remarks>
         /// Exemplo de Retorno:
         /// 
-        ///     GET http://localhost:5000/api/cadastro/todos
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/cadastro/todos
         /// 
         ///     {
         ///         "nomeUsuario": "string",
@@ -457,12 +457,12 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// busca um login com o Id passado.
+        /// Busca um login com o Id passado.
         /// </summary>
         /// <remarks>
         /// Exemplo de Retorno:
         ///
-        ///     GET http://localhost:5000/api/cadastro/buscarid/{Id}
+        ///     GET http://brunohafonso-001-site1.ctempurl.com/api/cadastro/buscarid/{Id}
         ///    
         ///     {
         ///         "nomeUsuario": "string",
@@ -516,7 +516,7 @@ namespace senai.twitter.api.Controllers
         /// <remarks>
         /// Exemplo de Requisição:
         ///
-        ///     POST http://localhost:5000/api/cadastro/cadastrar
+        ///     POST http://brunohafonso-001-site1.ctempurl.com/api/cadastro/cadastrar
         ///    
         ///     {
         ///         "nomeUsuario": "string",
@@ -572,12 +572,23 @@ namespace senai.twitter.api.Controllers
         /// <remarks>
         /// Exemplo de Requisição:
         ///
-        ///     PUT http://localhost:5000/api/cadastro/atualizar
+        ///     PUT http://brunohafonso-001-site1.ctempurl.com/api/cadastro/atualizar
         ///    
         ///     {
         ///         "nomeUsuario": "string",
         ///         "email": "string",
         ///         "senha": "string",
+        ///         "perfil": {
+        ///             "nome": "string",
+        ///             "dataNascimento": "1992-03-02T00:00:00",
+        ///             "estado": "string",
+        ///             "cidade": "string",
+        ///             "bio": "string",
+        ///             "avatarUrl": "string",
+        ///             "idLogin": 0,
+        ///             "id": 0,
+        ///             "qtdAtualizacoes": 0
+        ///         },
         ///         "id": 0,
         ///         "qtdAtualizacoes": 0
         ///     }
@@ -601,6 +612,10 @@ namespace senai.twitter.api.Controllers
                 login.AtualizadoEm = DateTime.Now;
                 login.QtdAtualizacoes = login.QtdAtualizacoes + 1;
                 login.AtualizadoPor = login.NomeUsuario;
+
+                login.Perfil.AtualizadoEm = DateTime.Now;
+                login.Perfil.QtdAtualizacoes = login.Perfil.QtdAtualizacoes + 1;
+                login.Perfil.AtualizadoPor = login.NomeUsuario;
 
                 _loginRepository.Atualizar(login);
                 return Ok($"Usuário {login.NomeUsuario} Atualizado Com Sucesso.");
