@@ -19,7 +19,7 @@ namespace senai.twitter.domain.Entities
         public string Email { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 8, ErrorMessage = "A senha deve ter no minimo 8 caracteres.")]
+        [StringLength(128, MinimumLength = 6, ErrorMessage = "A senha deve ter no minimo 6 caracteres.")]
         [DataType(DataType.Password)]
         public string Senha { get; set; }
 

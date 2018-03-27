@@ -251,20 +251,59 @@ namespace senai.twitter.api.Controllers
         [EnableCors("AllowAnyOrigin")]
         public IActionResult Historico(int Id)
         {
-            var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil"});
+            var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
 
             if(usuario != null) {
-                var rotasPesquisadas = _rotaPesquisadaRepository.Listar().Where(c => c.IdLogin == Id);
+                var rotasPesquisadas = usuario.RotasPesquisadas;
+                var qtdRotasPesquisadas = 0;
+                var dtUltimaPesquisa = "";
 
-                var rotasRealizadas = _rotaRealizadaRepository.Listar().Where(c => c.IdLogin == Id);
+                if(rotasPesquisadas.Count() < 1) 
+                {
+                    qtdRotasPesquisadas = 0;
+                } 
+                else 
+                {
+                    qtdRotasPesquisadas = rotasPesquisadas.Count();
+                    dtUltimaPesquisa = rotasPesquisadas.Last().CriadoEm.ToString();
+                }
 
-                var avaliacoes = _avaliacaoRepository.Listar().Where(c => c.IdLogin == Id);
+                var rotasRealizadas = usuario.RotasRealizadas;
+                var QtdRotasRealizadas = 0;
+                var dataUltimaRotaRealizada = "";
+
+                if(rotasRealizadas.Count() < 1) 
+                {
+                    QtdRotasRealizadas = 0;
+                }
+                else 
+                {
+                    QtdRotasRealizadas = rotasRealizadas.Count();
+                    dataUltimaRotaRealizada = rotasRealizadas.Last().CriadoEm.ToString();
+                }
+
+                var avaliacoes = usuario.Avaliacoes;
+                var QtdAvaliacoes = 0;
+                var dataUltimaAvaliacao = "";
+
+                if(avaliacoes.Count() < 1) 
+                {
+                   QtdAvaliacoes = 0; 
+                }
+                else
+                {
+                    QtdAvaliacoes = avaliacoes.Count();
+                    dataUltimaAvaliacao = avaliacoes.Last().CriadoEm.ToString();
+                }
 
                 var tempoTrajetos = 0;
 
-                foreach(var item in rotasRealizadas)
+                if(rotasRealizadas.Count() > 0) 
                 {
-                    tempoTrajetos = tempoTrajetos + item.DuracaoInt;
+                    foreach(var item in rotasRealizadas)
+                    {
+                        tempoTrajetos = tempoTrajetos + item.DuracaoInt;
+                    }
                 }
                 
                 var retorno = new {
@@ -272,12 +311,12 @@ namespace senai.twitter.api.Controllers
                     ultimaAtualizacaoLogin = usuario.AtualizadoEm,
                     QtdAtualizacoesPerfil = usuario.Perfil.QtdAtualizacoes,
                     ultimaAtualizacaoPerfil = usuario.Perfil.AtualizadoEm,
-                    rotaPesquisadas = rotasPesquisadas.Count(),
-                    dataUltimaPesquisa = rotasPesquisadas.Last().CriadoEm,
-                    QtdRotasRealizadas = rotasRealizadas.Count(),
-                    dataUltimaRotaRealizada = rotasRealizadas.Last().CriadoEm,
-                    QtdAvaliacoes = avaliacoes.Count(),
-                    dataUltimaAvaliacao = avaliacoes.Last().CriadoEm,
+                    rotaPesquisadas = qtdRotasPesquisadas,
+                    dataUltimaPesquisa = dtUltimaPesquisa,
+                    QtdRotasRealizadas = QtdRotasRealizadas,
+                    dataUltimaRotaRealizada = dataUltimaRotaRealizada,
+                    QtdAvaliacoes = QtdAvaliacoes,
+                    dataUltimaAvaliacao = dataUltimaAvaliacao,
                     tempoUsoApp = (tempoTrajetos / 60) + " mins"
                 };
 

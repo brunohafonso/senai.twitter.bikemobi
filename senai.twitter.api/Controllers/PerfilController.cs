@@ -61,7 +61,7 @@ namespace senai.twitter.api.Controllers
                 if(perfil != null)
                     return Ok(perfil);
                 else
-                    return NotFound();
+                    return NotFound("não existe nenhum perfil com esse Id");
             }
             catch(Exception ex)
             {
