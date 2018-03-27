@@ -73,10 +73,30 @@ namespace senai.twitter.api.Controllers
         }      
 
         /// <summary>
-        /// Efetua login
+        /// Efetua login.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///
+        ///     POST http://localhost:5000/api/cadastro/login
+        ///    
+        ///     {
+        ///         "nomeUsuario": "string",
+        ///         "senha": "string"
+        ///     }
+        /// 
+        ///     OU
+        /// 
+        ///     {
+        ///         "email": "string",
+        ///         "senha": "string"
+        ///     }
+        ///
+        /// </remarks>
         /// <param name="login">Email ou Nome do usuário e Senha do usuário.</param>
         /// <returns>Dados do token caso a autenticação tenha dado sucesso.</returns>
+        /// <response code="200">Dados do token caso a autenticação tenha dado sucesso.</response>
+        /// <response code="400">Falha na autenticação.</response>
         [Route("login")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
@@ -135,8 +155,22 @@ namespace senai.twitter.api.Controllers
         /// <summary>
         /// Solicita alteração de senha
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///
+        ///     POST http://localhost:5000/api/cadastro/esqueciminhasenha
+        ///    
+        ///     {
+        ///         "email": "string",
+        ///         "nomeUsuario": "string"
+        ///     }
+        /// 
+        /// </remarks>
         /// <param name="login">Email e nome de usuário.</param>
         /// <returns>Se a solicitação foi finalizada com sucesso.</returns>
+        /// <response code="200"> Retorna uma mensagem informando que a requisição de senha foi finalizada com sucesso.</response>
+        /// <response code="400"> Ocorreu um erro ao solicitar redefinição de senha.</response>
+        /// <response code="404">Usuário e/ou email nao cadastrados.</response>
         [Route("esqueciminhasenha")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
@@ -177,22 +211,35 @@ namespace senai.twitter.api.Controllers
                     return BadRequest("Erro ao solicitar nova senha. " + ex.Message);
                 }
                    
-            return BadRequest("Nome de usuário e/ou email não cadastrados.");
+            return NotFound("Nome de usuário e/ou email não cadastrados.");
         }
 
         /// <summary>
         /// Finaliza a alteração da senha.
         /// </summary>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///
+        ///     POST http://localhost:5000/api/cadastro/resetarsenha/{Id}
+        ///    
+        ///     {
+        ///         "senha": "string"
+        ///     }
+        /// 
+        /// </remarks>
         /// <param name="login">Senha do usuário.</param>
         /// <param name="Id">Id da requisição de alteração de senha.</param>
         /// <returns>Se a alteração de senha foi finalizada com sucesso.</returns>
+        /// <response code="200"> Retorna que senha foi alterada com sucesso.</response>
+        /// <response code="400"> Ocorreu um erro</response>
+        /// <response code="404"> Requisição de alteração senha não encontrada.</response>
         [Route("resetarsenha/{Id}")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult ResetarSenha(int Id, [FromBody] Login login)
         {
             var requisicao = _requisicaoAlterarSenhaRepository.BuscarPorId(Id);
-            if(requisicao == null) return BadRequest("Requisição de alteração de senha inexistente.");
+            if(requisicao == null) return NotFound("Requisição de alteração de senha inexistente.");
 
             var expiracao = requisicao.Expiracao;
             var expirada = expiracao.CompareTo(DateTime.Now);
@@ -206,11 +253,11 @@ namespace senai.twitter.api.Controllers
                         requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
                         requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
                         _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
-                        return Ok("Requisição de alteração de senha expirada.");
+                        return BadRequest("Requisição de alteração de senha expirada.");
                     }
                     else
                     {
-                        return Ok("Requisição de alteração de senha expirada.");
+                        return BadRequest("Requisição de alteração de senha expirada.");
                     }
                 }
                 catch(Exception ex)
@@ -241,29 +288,90 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// Retorna dados do historico do usuário
+        /// Retorna dados do historico do usuário.
         /// </summary>
-        /// <param name="Id">Id do usuári que o histórico será pesquisado.</param>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        ///
+        ///     GET http://localhost:5000/api/cadastro/historico/{Id}
+        ///    
+        ///     {
+        ///         "qtdAtualizacoesLogin": 0,
+        ///         "ultimaAtualizacaoLogin": "2018-03-26T17:29:48.5162586",
+        ///         "qtdAtualizacoesPerfil": 0,
+        ///         "ultimaAtualizacaoPerfil": "2018-03-26T17:52:16.0957272",
+        ///         "rotaPesquisadas": 0,
+        ///         "dataUltimaPesquisa": "26/03/2018 15:41:05",
+        ///         "qtdRotasRealizadas": 0,
+        ///         "dataUltimaRotaRealizada": "26/03/2018 15:41:06",
+        ///         "qtdAvaliacoes": 0,
+        ///         "dataUltimaAvaliacao": "26/03/2018 12:24:17",
+        ///         "tempoUsoApp": "string"
+        ///     }
+        /// 
+        /// </remarks>
+        /// <param name="Id">Id do usuário que o histórico será pesquisado.</param>
         /// <returns>Dados do Histórico do usuário.</returns>
+        /// <response code="200"> Retorna o histórico do usuário buscado pelo Id.</response>
+        /// <response code="404"> Usuário não Encontrado.</response>
         [Route("historico/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
         public IActionResult Historico(int Id)
         {
-            var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil"});
+            var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
 
             if(usuario != null) {
-                var rotasPesquisadas = _rotaPesquisadaRepository.Listar().Where(c => c.IdLogin == Id);
+                var rotasPesquisadas = usuario.RotasPesquisadas;
+                var qtdRotasPesquisadas = 0;
+                var dtUltimaPesquisa = "";
 
-                var rotasRealizadas = _rotaRealizadaRepository.Listar().Where(c => c.IdLogin == Id);
+                if(rotasPesquisadas.Count() < 1) 
+                {
+                    qtdRotasPesquisadas = 0;
+                } 
+                else 
+                {
+                    qtdRotasPesquisadas = rotasPesquisadas.Count();
+                    dtUltimaPesquisa = rotasPesquisadas.Last().CriadoEm.ToString();
+                }
 
-                var avaliacoes = _avaliacaoRepository.Listar().Where(c => c.IdLogin == Id);
+                var rotasRealizadas = usuario.RotasRealizadas;
+                var QtdRotasRealizadas = 0;
+                var dataUltimaRotaRealizada = "";
+
+                if(rotasRealizadas.Count() < 1) 
+                {
+                    QtdRotasRealizadas = 0;
+                }
+                else 
+                {
+                    QtdRotasRealizadas = rotasRealizadas.Count();
+                    dataUltimaRotaRealizada = rotasRealizadas.Last().CriadoEm.ToString();
+                }
+
+                var avaliacoes = usuario.Avaliacoes;
+                var QtdAvaliacoes = 0;
+                var dataUltimaAvaliacao = "";
+
+                if(avaliacoes.Count() < 1) 
+                {
+                   QtdAvaliacoes = 0; 
+                }
+                else
+                {
+                    QtdAvaliacoes = avaliacoes.Count();
+                    dataUltimaAvaliacao = avaliacoes.Last().CriadoEm.ToString();
+                }
 
                 long tempoTrajetos = 0;
 
-                foreach(var item in rotasRealizadas)
+                if(rotasRealizadas.Count() > 0) 
                 {
-                    tempoTrajetos = tempoTrajetos + item.DuracaoInt;
+                    foreach(var item in rotasRealizadas)
+                    {
+                        tempoTrajetos = tempoTrajetos + item.DuracaoInt;
+                    }
                 }
                 
                 var retorno = new {
@@ -271,12 +379,12 @@ namespace senai.twitter.api.Controllers
                     ultimaAtualizacaoLogin = usuario.AtualizadoEm,
                     QtdAtualizacoesPerfil = usuario.Perfil.QtdAtualizacoes,
                     ultimaAtualizacaoPerfil = usuario.Perfil.AtualizadoEm,
-                    rotaPesquisadas = rotasPesquisadas.Count(),
-                    dataUltimaPesquisada = rotasPesquisadas.Last().CriadoEm,
-                    QtdRotasRealizadas = rotasRealizadas.Count(),
-                    dataUltimaRotaRealizada = rotasRealizadas.Last().CriadoEm,
-                    QtdAvaliacoes = avaliacoes.Count(),
-                    dataUltimaAvaliacao = avaliacoes.Last().CriadoEm,
+                    rotaPesquisadas = qtdRotasPesquisadas,
+                    dataUltimaPesquisa = dtUltimaPesquisa,
+                    QtdRotasRealizadas = QtdRotasRealizadas,
+                    dataUltimaRotaRealizada = dataUltimaRotaRealizada,
+                    QtdAvaliacoes = QtdAvaliacoes,
+                    dataUltimaAvaliacao = dataUltimaAvaliacao,
                     tempoUsoApp = (tempoTrajetos / 60) + " mins"
                 };
 
@@ -284,15 +392,52 @@ namespace senai.twitter.api.Controllers
             }
             else 
             {
-                return BadRequest("Não existe nenhum usuario com esse Id cadastrado. ");
+                return NotFound("Não existe nenhum usuario com esse Id cadastrado.");
             }
                 
         }
         
         /// <summary>
-        /// Busca todos os logins na base de dados
+        /// Busca todos os logins na base de dados.
         /// </summary>
-        /// <returns>Lista com todos os logins na base de dados</returns>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        /// 
+        ///     GET http://localhost:5000/api/cadastro/todos
+        /// 
+        ///     {
+        ///         "nomeUsuario": "string",
+        ///         "email": "string",
+        ///         "senha": "string",
+        ///         "perfil": {
+        ///         "nome": "string",
+        ///         "dataNascimento": "2018-03-27T03:55:57.332Z",
+        ///         "estado": "string",
+        ///         "cidade": "string",
+        ///         "bio": "string",
+        ///         "avatarUrl": "string",
+        ///         "idLogin": 0,
+        ///         "id": 0,
+        ///         "atualizadoEm": "2018-03-26T17:52:16.0957272",
+        ///         "atualizadoPor": "string",
+        ///         "criadoEm": "2018-03-14T00:00:00",
+        ///         "qtdAtualizacoes": 0
+        ///     },
+        ///         "rotasPesquisadas": null,
+        ///         "rotasRealizadas": null,
+        ///         "avaliacoes": null,
+        ///         "id": 0,
+        ///         "atualizadoEm": "2018-03-26T17:29:48.5162586",
+        ///         "atualizadoPor": "string",
+        ///         "criadoEm": "0001-01-01T00:00:00",
+        ///         "qtdAtualizacoes": 0
+        ///     }
+        /// 
+        /// </remarks>
+        /// <returns>Lista com todos os logins na base de dados.</returns>
+        /// <response code="200"> Retorna lista com todos os logins na base de dados.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
+        /// <response code="404"> Nenhum login cadastrado.</response>
         [Route("todos")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
@@ -300,6 +445,8 @@ namespace senai.twitter.api.Controllers
         {
             try {
                 var logins = _loginRepository.Listar(new string[]{"Perfil"});
+                if(logins.Count() < 1) return NotFound("Nenhum login cadastrado.");
+
                 return Ok(logins);
             } 
             catch(Exception ex)
@@ -310,10 +457,46 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// busca um login com o Id passado
+        /// busca um login com o Id passado.
         /// </summary>
-        /// <param name="Id">Id do login a ser buscado</param>
-        /// <returns>Objeto login com o Id pesquisado</returns>
+        /// <remarks>
+        /// Exemplo de Retorno:
+        ///
+        ///     GET http://localhost:5000/api/cadastro/buscarid/{Id}
+        ///    
+        ///     {
+        ///         "nomeUsuario": "string",
+        ///         "email": "string",
+        ///         "senha": "string",
+        ///         "perfil": {
+        ///         "nome": "string",
+        ///         "dataNascimento": "2018-03-27T03:55:57.332Z",
+        ///         "estado": "string",
+        ///         "cidade": "string",
+        ///         "bio": "string",
+        ///         "avatarUrl": "string",
+        ///         "idLogin": 0,
+        ///         "id": 0,
+        ///         "atualizadoEm": "2018-03-26T17:52:16.0957272",
+        ///         "atualizadoPor": "string",
+        ///         "criadoEm": "2018-03-14T00:00:00",
+        ///         "qtdAtualizacoes": 0
+        ///     },
+        ///         "rotasPesquisadas": null,
+        ///         "rotasRealizadas": null,
+        ///         "avaliacoes": null,
+        ///         "id": 0,
+        ///         "atualizadoEm": "2018-03-26T17:29:48.5162586",
+        ///         "atualizadoPor": "string",
+        ///         "criadoEm": "0001-01-01T00:00:00",
+        ///         "qtdAtualizacoes": 0
+        ///     }
+        /// 
+        /// </remarks> 
+        /// <param name="Id">Id do login a ser buscado.</param>
+        /// <returns>Objeto login com o Id pesquisado.</returns>
+        /// <response code="200"> Retorna login buscado através do Id.</response>
+        /// <response code="404"> Nenhum login com Id buscado cadastrado.</response>
         [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
@@ -323,15 +506,37 @@ namespace senai.twitter.api.Controllers
             if (login != null)
                 return Ok(login);
             else
-                return NotFound();
+                return NotFound("Login não encontrado.");
         }
 
 
         /// <summary>
-        /// Efetua o cadastro de Logins juntamente com os dados básicos do perfil
+        /// Efetua o cadastro de Logins juntamente com os dados básicos do perfil.
         /// </summary>
-        /// <param name="login">Dados do login/perfil conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
-        /// <returns>String informando qual objeto foi cadastrado.</returns>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///
+        ///     POST http://localhost:5000/api/cadastro/cadastrar
+        ///    
+        ///     {
+        ///         "nomeUsuario": "string",
+        ///         "email": "string",
+        ///         "senha": "string",
+        ///         "perfil": {
+        ///             "nome": "string",
+        ///             "dataNascimento": "2018-03-27T03:55:57.332Z",
+        ///             "estado": "string",
+        ///             "cidade": "string",
+        ///             "bio": "string",
+        ///             "avatarUrl": "string",
+        ///         }
+        ///     }
+        /// 
+        /// </remarks>
+        /// <param name="login">Dados do login/perfil conforme criterios estabelecidos (precisa receber o objeto inteiro).</param>
+        /// <returns>Mensagem informando qual login foi cadastrado.</returns>
+        /// <response code="200"> Retorna mensagem informando qual login foi cadastrado.</response>
+        /// <response code="400"> Ocorreu um erro.</response>
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
@@ -362,10 +567,26 @@ namespace senai.twitter.api.Controllers
         }
 
         /// <summary>
-        /// Efetua a atualização dos dados do Login juntamente com os dados básicos do perfil
+        /// Efetua a atualização dos dados do Login juntamente com os dados básicos do perfil.
         /// </summary>
-        /// <param name="login">Dados do login/perfil conforme criterios estabelecidos (precisa receber o objeto inteiro)</param>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///
+        ///     PUT http://localhost:5000/api/cadastro/atualizar
+        ///    
+        ///     {
+        ///         "nomeUsuario": "string",
+        ///         "email": "string",
+        ///         "senha": "string",
+        ///         "id": 0,
+        ///         "qtdAtualizacoes": 0
+        ///     }
+        /// 
+        /// </remarks>
+        /// <param name="login">Dados do login/perfil conforme criterios estabelecidos (precisa receber o objeto inteiro).</param>
         /// <returns>String informando qual objeto foi atualizado.</returns>
+        /// <response code="200"> Retorna mensagem informando qual login foi atualizado.</response>
+        /// <response code="400"> Ocorreu um erro.</response> 
         [Route("atualizar")]
         [HttpPut]
         [EnableCors("AllowAnyOrigin")]
