@@ -20,7 +20,7 @@ namespace senai.twitter.api.Controllers
     public class LoginController : Controller
     {
         
-        public string Dominio = "localhost:5000/";
+        public string Dominio = "http://brunohafonso-001-site1.ctempurl.com/";
         private readonly TokenConfigurations _tokenOptions;
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
@@ -198,10 +198,10 @@ namespace senai.twitter.api.Controllers
                         }
 
 
-                    string link = Dominio + $"'api/cadastro/resetarsenha/{requisicao.Id}'";
+                    string link = Dominio + $"api/cadastro/resetarsenha/{requisicao.Id}";
 
                     string mensagem = $"Olá, {log.NomeUsuario}, Pronto para escolher sua senha? \n Refefinir Senha \n (Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)";
-                    string htmlmensagem = $"<div style='font-family: Helvetica,Arial,sans-serif; max-width: 650px; margin: auto;'><img width='212px' height='72px' src='http://bike-mobi.herokuapp.com/static/media/logoBikeMobi.9f5f6ad8.png'/><h1>Pronto para escolher sua senha?</h1> <a style='cursor: pointer; text-align: center; border-radius: 4px; background-color: #5db8fc; text-decoration: none; font-size: 25px; font-weight: bold; color: #fff; width: 400px; margin: auto; padding: 5px 10px' href={link}>Redefinir Senha</a><h2>(Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)</h2></div>";
+                    string htmlmensagem = $@"<div style='font-family: Helvetica,Arial,sans-serif; max-width: 650px; margin: auto;'><img width='212px' height='72px' src='http://bike-mobi.herokuapp.com/static/media/logoBikeMobi.9f5f6ad8.png'/><h1>Olá, {log.NomeUsuario}, Pronto para escolher sua senha?</h1> <a style='cursor: pointer; text-align: center; border-radius: 4px; background-color: #5db8fc; text-decoration: none; font-size: 25px; font-weight: bold; color: #fff; width: 400px; margin: auto; padding: 5px 10px' href={link}>Redefinir Senha</a><h2>(Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)</h2></div>";
 
                     EnviarEmail(log, "Redefina sua senha do BikeMobi", mensagem, htmlmensagem);
                     return Ok("Sua alteração de senha foi recebida com sucesso, em breve você receberá um email com as instruções para alteração da senha.");
@@ -239,7 +239,7 @@ namespace senai.twitter.api.Controllers
         public IActionResult ResetarSenha(int Id, [FromBody] Login login)
         {
             var requisicao = _requisicaoAlterarSenhaRepository.BuscarPorId(Id);
-            if(requisicao == null) return NotFound("Requisição de alteração de senha inexistente.");
+            if(requisicao == null) return BadRequest("Requisição de alteração de senha inexistente.");
 
             var expiracao = requisicao.Expiracao;
             var expirada = expiracao.CompareTo(DateTime.Now);
@@ -253,11 +253,11 @@ namespace senai.twitter.api.Controllers
                         requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
                         requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
                         _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
-                        return BadRequest("Requisição de alteração de senha expirada.");
+                        return Ok("Requisição de alteração de senha expirada.");
                     }
                     else
                     {
-                        return BadRequest("Requisição de alteração de senha expirada.");
+                        return Ok("Requisição de alteração de senha expirada.");
                     }
                 }
                 catch(Exception ex)
@@ -265,26 +265,33 @@ namespace senai.twitter.api.Controllers
                     return BadRequest("Erro ao processar alteração de senha. "+ ex.Message);
                 }
             
-            Login log = _loginRepository.BuscarPorId(requisicao.IdLogin);
-            log.Senha = EncriptarSenha(login.Senha);
-            log.AtualizadoPor = log.NomeUsuario;
-            log.AtualizadoEm = DateTime.Now;
-            log.QtdAtualizacoes = log.QtdAtualizacoes + 1;
+            if(requisicao.Status != "Expirado" && requisicao.Status != "Realizada") 
+            {
+                Login log = _loginRepository.BuscarPorId(requisicao.IdLogin);
+                log.Senha = EncriptarSenha(login.Senha);
+                log.AtualizadoPor = log.NomeUsuario;
+                log.AtualizadoEm = DateTime.Now;
+                log.QtdAtualizacoes = log.QtdAtualizacoes + 1;
 
-            try 
+                try 
+                {
+                    requisicao.Status = "Realizada";
+                    requisicao.AtualizadoEm = DateTime.Now;
+                    requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
+                    requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
+                    _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
+                    _loginRepository.Atualizar(log);
+                    return Ok("Senha alterada com sucesso.");
+                }
+                catch(Exception ex)
+                {
+                    return BadRequest("Erro ao finalizar a alteração de senha. " + ex.Message);
+                } 
+            } 
+            else
             {
-                requisicao.Status = "Realizada";
-                requisicao.AtualizadoEm = DateTime.Now;
-                requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
-                requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
-                _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
-                _loginRepository.Atualizar(log);
-                return Ok("Senha alterada com sucesso.");
+                return BadRequest("Alteração de senha invalida ou expirada.");
             }
-            catch(Exception ex)
-            {
-                return BadRequest("Erro ao finalizar a alteração de senha. " + ex.Message);
-            }   
         }
 
         /// <summary>
