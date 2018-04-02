@@ -12,9 +12,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using senai.twitter.domain.Contracts;
+using senai.twitter.domain.Entities;
 using senai.twitter.repository.Context;
 using senai.twitter.repository.Repositories;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 
 namespace senai.twitter.api
 {
@@ -30,13 +35,48 @@ namespace senai.twitter.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+             services.AddCors(options => {
+                options.AddPolicy("AllowAnyOrigin", builder => {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                });
+            });
+
+            var signingConfigurations = new SigningConfigurations();
+            services.AddSingleton(signingConfigurations);
+
+            var tokenConfigurations = new TokenConfigurations();
+            new ConfigureFromConfigurationOptions<TokenConfigurations>(
+                Configuration.GetSection("TokenConfigurations")).Configure(tokenConfigurations);
+
+            services.AddSingleton(tokenConfigurations);
+            services.AddAuthentication(authOptions => { 
+                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions => {
+                var parametrosValidacao = bearerOptions.TokenValidationParameters;
+                parametrosValidacao.IssuerSigningKey = signingConfigurations.Key;
+                parametrosValidacao.ValidAudience = tokenConfigurations.Audience;
+                parametrosValidacao.ValidIssuer = tokenConfigurations.Issuer;
+                parametrosValidacao.ValidateIssuerSigningKey = true;
+                parametrosValidacao.RequireExpirationTime = true;
+                parametrosValidacao.ValidateLifetime = true;
+                parametrosValidacao.ClockSkew = TimeSpan.Zero;
+            });
+
+            services.AddAuthorization(auth => {
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser().Build());
+            });
+
+
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info {
-                    Version = "V",
+                    Version = "V1",
                     Title = "BikeMobi API",
-                    Description = "Documentação de uso da BikeMobi API",
-                    TermsOfService = "None",
-                    Contact = new Contact{Name = "Bruno Afonso", Email = "brunohafonso@gmail.com", Url = "https://www.linkedin.com/in/bruno-henrique-afonso-6028a4149/"}
+                    Description = "Documentação de uso da BikeMobi API"
                 });
 
                 var basePath = AppContext.BaseDirectory;
@@ -56,21 +96,22 @@ namespace senai.twitter.api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
+            public void Configure(IApplicationBuilder app, IHostingEnvironment env)
             {
-                app.UseDeveloperExceptionPage();
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+                
+                app.UseCors("AllowAnyOrigin");
+                
+                app.UseMvc();
+
+                app.UseSwagger();
+
+                app.UseSwaggerUI(c => {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+                });
             }
-
-            app.UseMvc();
-
-            app.UseSwagger();
-
-            app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-            });
-           
         }
     }
-}

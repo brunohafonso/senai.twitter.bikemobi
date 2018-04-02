@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "41a78d0f8fbc1bc333edd6d08e5751d17037f079"
+    "signature": "3ea2d6ba91c43a1773a50bca0e28b0e20ddccece"
   },
   "compilationOptions": {
     "defines": [
@@ -24,7 +24,9 @@
       "senai.twitter.api/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.All": "2.0.0",
+          "Microsoft.IdentityModel.Tokens": "5.2.1",
           "Microsoft.NETCore.App": "2.0.0",
+          "Sendgrid": "9.9.0",
           "Swashbuckle.AspNetCore.Swagger": "2.2.0",
           "Swashbuckle.AspNetCore.SwaggerGen": "2.2.0",
           "Swashbuckle.AspNetCore.SwaggerUI": "2.2.0",
@@ -36,6 +38,14 @@
         },
         "compile": {
           "senai.twitter.api.dll": {}
+        }
+      },
+      "EntityFramework/5.0.0": {
+        "runtime": {
+          "lib/net45/EntityFramework.dll": {}
+        },
+        "compile": {
+          "lib/net45/EntityFramework.dll": {}
         }
       },
       "Libuv/1.10.0": {
@@ -2179,8 +2189,9 @@
           "lib/netstandard1.3/Microsoft.IdentityModel.Clients.ActiveDirectory.dll": {}
         }
       },
-      "Microsoft.IdentityModel.Logging/1.1.4": {
+      "Microsoft.IdentityModel.Logging/5.2.1": {
         "dependencies": {
+          "NETStandard.Library": "2.0.0",
           "System.Diagnostics.Tracing": "4.3.0",
           "System.Globalization": "4.3.0",
           "System.IO": "4.3.0",
@@ -2219,9 +2230,10 @@
           "lib/netstandard1.4/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
         }
       },
-      "Microsoft.IdentityModel.Tokens/5.1.4": {
+      "Microsoft.IdentityModel.Tokens/5.2.1": {
         "dependencies": {
-          "Microsoft.IdentityModel.Logging": "1.1.4",
+          "Microsoft.IdentityModel.Logging": "5.2.1",
+          "NETStandard.Library": "2.0.0",
           "Newtonsoft.Json": "10.0.1",
           "System.Collections": "4.3.0",
           "System.Diagnostics.Tools": "4.3.0",
@@ -2229,12 +2241,12 @@
           "System.Runtime.Extensions": "4.3.0",
           "System.Runtime.InteropServices": "4.3.0",
           "System.Runtime.InteropServices.RuntimeInformation": "4.3.0",
+          "System.Runtime.Serialization.Xml": "4.3.0",
           "System.Security.Claims": "4.3.0",
           "System.Security.Cryptography.Algorithms": "4.3.0",
           "System.Security.Cryptography.X509Certificates": "4.3.0",
           "System.Text.RegularExpressions": "4.3.0",
-          "System.Threading": "4.3.0",
-          "System.Xml.ReaderWriter": "4.3.0"
+          "System.Threading": "4.3.0"
         },
         "runtime": {
           "lib/netstandard1.4/Microsoft.IdentityModel.Tokens.dll": {}
@@ -2553,6 +2565,19 @@
           }
         }
       },
+      "Sendgrid/9.9.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Abstractions": "2.0.0",
+          "NETStandard.Library": "2.0.0",
+          "Newtonsoft.Json": "10.0.1"
+        },
+        "runtime": {
+          "lib/netstandard1.3/SendGrid.dll": {}
+        },
+        "compile": {
+          "lib/netstandard1.3/SendGrid.dll": {}
+        }
+      },
       "SQLitePCLRaw.bundle_green/1.1.7": {
         "dependencies": {
           "SQLitePCLRaw.core": "1.1.7",
@@ -2792,6 +2817,17 @@
           "System.Text.Encoding": "4.3.0"
         }
       },
+      "System.Data.Entity.Repository/2.0.0.1": {
+        "dependencies": {
+          "EntityFramework": "5.0.0"
+        },
+        "runtime": {
+          "lib/net45/System.Data.Entity.Repository.dll": {}
+        },
+        "compile": {
+          "lib/net45/System.Data.Entity.Repository.dll": {}
+        }
+      },
       "System.Data.SqlClient/4.4.0": {
         "dependencies": {
           "Microsoft.Win32.Registry": "4.4.0",
@@ -2929,7 +2965,7 @@
       },
       "System.IdentityModel.Tokens.Jwt/5.1.4": {
         "dependencies": {
-          "Microsoft.IdentityModel.Tokens": "5.1.4"
+          "Microsoft.IdentityModel.Tokens": "5.2.1"
         },
         "runtime": {
           "lib/netstandard1.4/System.IdentityModel.Tokens.Jwt.dll": {}
@@ -3184,7 +3220,7 @@
           "System.Threading": "4.3.0"
         }
       },
-      "System.Private.DataContractSerialization/4.1.1": {
+      "System.Private.DataContractSerialization/4.3.0": {
         "dependencies": {
           "System.Collections": "4.3.0",
           "System.Collections.Concurrent": "4.3.0",
@@ -3208,8 +3244,9 @@
           "System.Threading": "4.3.0",
           "System.Threading.Tasks": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0",
+          "System.Xml.XDocument": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0",
-          "System.Xml.XmlSerializer": "4.0.11"
+          "System.Xml.XmlSerializer": "4.3.0"
         }
       },
       "System.Reflection/4.3.0": {
@@ -3355,7 +3392,7 @@
       "System.Runtime.Serialization.Json/4.0.2": {
         "dependencies": {
           "System.IO": "4.3.0",
-          "System.Private.DataContractSerialization": "4.1.1",
+          "System.Private.DataContractSerialization": "4.3.0",
           "System.Runtime": "4.3.0"
         }
       },
@@ -3363,6 +3400,16 @@
         "dependencies": {
           "System.Resources.ResourceManager": "4.3.0",
           "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Runtime.Serialization.Xml/4.3.0": {
+        "dependencies": {
+          "System.IO": "4.3.0",
+          "System.Private.DataContractSerialization": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0",
+          "System.Text.Encoding": "4.3.0",
+          "System.Xml.ReaderWriter": "4.3.0"
         }
       },
       "System.Security.AccessControl/4.4.0": {
@@ -3782,7 +3829,7 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "System.Xml.XmlSerializer/4.0.11": {
+      "System.Xml.XmlSerializer/4.3.0": {
         "dependencies": {
           "System.Collections": "4.3.0",
           "System.Globalization": "4.3.0",
@@ -3845,7 +3892,9 @@
       },
       "senai.twitter.domain/1.0.0": {
         "dependencies": {
-          "System.ComponentModel.Annotations": "4.4.1"
+          "Microsoft.IdentityModel.Tokens": "5.2.1",
+          "System.ComponentModel.Annotations": "4.4.1",
+          "System.Data.Entity.Repository": "2.0.0.1"
         },
         "runtime": {
           "senai.twitter.domain.dll": {}
@@ -3860,6 +3909,7 @@
           "Microsoft.EntityFrameworkCore.Design": "2.0.1",
           "Microsoft.EntityFrameworkCore.Relational": "2.0.1",
           "Microsoft.EntityFrameworkCore.SqlServer": "2.0.1",
+          "Microsoft.IdentityModel.Tokens": "5.2.1",
           "senai.twitter.domain": "1.0.0"
         },
         "runtime": {
@@ -4052,6 +4102,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "EntityFramework/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WYfgJWKg/RjwU8pzZkImD9DsV+J1nqDcIGp1S0/bdnElKBmAaUC2nmq/QQAcco32KyQQWnLgJNiDzIOz2xWFbQ==",
+      "path": "entityframework/5.0.0",
+      "hashPath": "entityframework.5.0.0.nupkg.sha512"
     },
     "Libuv/1.10.0": {
       "type": "package",
@@ -5110,12 +5167,12 @@
       "path": "microsoft.identitymodel.clients.activedirectory/3.14.1",
       "hashPath": "microsoft.identitymodel.clients.activedirectory.3.14.1.nupkg.sha512"
     },
-    "Microsoft.IdentityModel.Logging/1.1.4": {
+    "Microsoft.IdentityModel.Logging/5.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-j7t22EsDOuo0IXqAbp6ijdB1GuaY8cu3YoPNZpymOhUMTVC+wRTV0IHqxL31HacCnJHU/igsqe70fDKZgZu3oA==",
-      "path": "microsoft.identitymodel.logging/1.1.4",
-      "hashPath": "microsoft.identitymodel.logging.1.1.4.nupkg.sha512"
+      "sha512": "sha512-kbmvhMYu5OZXWN3toFXhrj3bSN7B+ZzNWzAZQ4Ofp5x2srk9ZCYFljETGS5faxzPwGd5+7W4WZlAfOI7QvzhlA==",
+      "path": "microsoft.identitymodel.logging/5.2.1",
+      "hashPath": "microsoft.identitymodel.logging.5.2.1.nupkg.sha512"
     },
     "Microsoft.IdentityModel.Protocols/2.1.4": {
       "type": "package",
@@ -5131,12 +5188,12 @@
       "path": "microsoft.identitymodel.protocols.openidconnect/2.1.4",
       "hashPath": "microsoft.identitymodel.protocols.openidconnect.2.1.4.nupkg.sha512"
     },
-    "Microsoft.IdentityModel.Tokens/5.1.4": {
+    "Microsoft.IdentityModel.Tokens/5.2.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-SsJbZVPvjSlKFDAQmR2wpL6ZD/vCFlIsf0jxRlBJwyzKXZy3Wi/Xo+fE2MzAerLsJgG1UCdtplRwqDyq1euayw==",
-      "path": "microsoft.identitymodel.tokens/5.1.4",
-      "hashPath": "microsoft.identitymodel.tokens.5.1.4.nupkg.sha512"
+      "sha512": "sha512-wVWYpXfE6gpkSrIRNo5TDVC7ss6KPTTrmT6x8ysHiZRIMSRAZ8TyHEAmpdATBBPNRmnlevyAs4CK6nPfDpCTqw==",
+      "path": "microsoft.identitymodel.tokens/5.2.1",
+      "hashPath": "microsoft.identitymodel.tokens.5.2.1.nupkg.sha512"
     },
     "Microsoft.Net.Http.Headers/2.0.0": {
       "type": "package",
@@ -5355,6 +5412,13 @@
       "path": "runtime.win-x86.runtime.native.system.data.sqlclient.sni/4.4.0",
       "hashPath": "runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
     },
+    "Sendgrid/9.9.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3v4aIYXqTvhnozBvpCyf+U9DMiZzN9s4m7tpl8RjVHRN0IUKSFwJ0eio7GVjT03vTTUOXhOY8M+15zLYzQGhYQ==",
+      "path": "sendgrid/9.9.0",
+      "hashPath": "sendgrid.9.9.0.nupkg.sha512"
+    },
     "SQLitePCLRaw.bundle_green/1.1.7": {
       "type": "package",
       "serviceable": true,
@@ -5508,6 +5572,13 @@
       "sha512": "sha512-DHDrIxiqk1h03m6khKWV2X8p/uvN79rgSqpilL6uzpmSfxfU5ng8VcPtW4qsDsQDHiTv6IPV9TmD5M/vElPNLg==",
       "path": "system.console/4.3.0",
       "hashPath": "system.console.4.3.0.nupkg.sha512"
+    },
+    "System.Data.Entity.Repository/2.0.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MnYUvHPcOAUGIyOzKR4A6Kd918VkCjKpfFCQoNdjY6LO4y1QwrwWZtdmOs2B3wozTYfJgPWKpIeW3ZHn+ylgrA==",
+      "path": "system.data.entity.repository/2.0.0.1",
+      "hashPath": "system.data.entity.repository.2.0.0.1.nupkg.sha512"
     },
     "System.Data.SqlClient/4.4.0": {
       "type": "package",
@@ -5705,12 +5776,12 @@
       "path": "system.objectmodel/4.3.0",
       "hashPath": "system.objectmodel.4.3.0.nupkg.sha512"
     },
-    "System.Private.DataContractSerialization/4.1.1": {
+    "System.Private.DataContractSerialization/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-lcqFBUaCZxPiUkA4dlSOoPZGtZsAuuElH2XHgLwGLxd7ZozWetV5yiz0qGAV2AUYOqw97MtZBjbLMN16Xz4vXA==",
-      "path": "system.private.datacontractserialization/4.1.1",
-      "hashPath": "system.private.datacontractserialization.4.1.1.nupkg.sha512"
+      "sha512": "sha512-yDaJ2x3mMmjdZEDB4IbezSnCsnjQ4BxinKhRAaP6kEgL6Bb6jANWphs5SzyD8imqeC/3FxgsuXT6ykkiH1uUmA==",
+      "path": "system.private.datacontractserialization/4.3.0",
+      "hashPath": "system.private.datacontractserialization.4.3.0.nupkg.sha512"
     },
     "System.Reflection/4.3.0": {
       "type": "package",
@@ -5844,6 +5915,13 @@
       "sha512": "sha512-Wz+0KOukJGAlXjtKr+5Xpuxf8+c8739RI1C+A2BoQZT+wMCCoMDDdO8/4IRHfaVINqL78GO8dW8G2lW/e45Mcw==",
       "path": "system.runtime.serialization.primitives/4.3.0",
       "hashPath": "system.runtime.serialization.primitives.4.3.0.nupkg.sha512"
+    },
+    "System.Runtime.Serialization.Xml/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nUQx/5OVgrqEba3+j7OdiofvVq9koWZAC7Z3xGI8IIViZqApWnZ5+lLcwYgTlbkobrl/Rat+Jb8GeD4WQESD2A==",
+      "path": "system.runtime.serialization.xml/4.3.0",
+      "hashPath": "system.runtime.serialization.xml.4.3.0.nupkg.sha512"
     },
     "System.Security.AccessControl/4.4.0": {
       "type": "package",
@@ -6048,12 +6126,12 @@
       "path": "system.xml.xmldocument/4.3.0",
       "hashPath": "system.xml.xmldocument.4.3.0.nupkg.sha512"
     },
-    "System.Xml.XmlSerializer/4.0.11": {
+    "System.Xml.XmlSerializer/4.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-FrazwwqfIXTfq23mfv4zH+BjqkSFNaNFBtjzu3I9NRmG8EELYyrv/fJnttCIwRMFRR/YKXF1hmsMmMEnl55HGw==",
-      "path": "system.xml.xmlserializer/4.0.11",
-      "hashPath": "system.xml.xmlserializer.4.0.11.nupkg.sha512"
+      "sha512": "sha512-MYoTCP7EZ98RrANESW05J5ZwskKDoN0AuZ06ZflnowE50LTpbR5yRg3tHckTVm5j/m47stuGgCrCHWePyHS70Q==",
+      "path": "system.xml.xmlserializer/4.3.0",
+      "hashPath": "system.xml.xmlserializer.4.3.0.nupkg.sha512"
     },
     "System.Xml.XPath/4.3.0": {
       "type": "package",
