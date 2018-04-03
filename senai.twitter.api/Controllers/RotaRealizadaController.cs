@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using senai.twitter.domain.Contracts;
@@ -87,6 +88,7 @@ namespace senai.twitter.api.Controllers
         [HttpGet]
         [Route("todos")]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Buscar()
         {
            try
@@ -166,6 +168,7 @@ namespace senai.twitter.api.Controllers
         [HttpGet]
         [Route("buscarid/{Id}")]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult buscarid(int Id)
         {
             var rotas = _rotaRealizadaRepository.Listar(new string[]{"RotaPesquisada", "Avaliacao"}).Where(r => r.IdLogin == Id);
@@ -203,6 +206,7 @@ namespace senai.twitter.api.Controllers
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Cadastrar([FromBody] RotaRealizada rota)
         {
             if(!ModelState.IsValid)

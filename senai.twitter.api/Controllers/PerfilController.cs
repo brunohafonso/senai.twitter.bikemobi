@@ -66,7 +66,7 @@ namespace senai.twitter.api.Controllers
         [HttpGet]
         [Route("todos")]
         [EnableCors("AllowAnyOrigin")]
-        //[Authorize("Bearer")]
+        [Authorize("Bearer")]
         public IActionResult Buscar()
         {
             try {
@@ -123,6 +123,7 @@ namespace senai.twitter.api.Controllers
         [HttpGet]
         [Route("buscarid/{Id}")]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult BuscarPorId(int Id)
         {
             try
@@ -167,6 +168,7 @@ namespace senai.twitter.api.Controllers
         [HttpPut]
         [Route("atualizar")]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Atualizar([FromBody] Perfil perfil)
         {
             if(!ModelState.IsValid)

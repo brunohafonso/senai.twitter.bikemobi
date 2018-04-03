@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -100,6 +101,7 @@ namespace senai.twitter.api.Controllers
         [Route("login")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult Logar([FromBody] Login login, [FromServices] SigningConfigurations signingConfigurations, [FromServices] TokenConfigurations tokenConfigurations)
         {
             Login log = _loginRepository.Listar().FirstOrDefault(c => (c.Email == login.Email || c.NomeUsuario == login.NomeUsuario) && c.Senha == EncriptarSenha(login.Senha));
@@ -174,6 +176,7 @@ namespace senai.twitter.api.Controllers
         [Route("esqueciminhasenha")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult SolicitarResetSenha([FromBody] Login login)
         {
             Login log = _loginRepository.Listar().FirstOrDefault(c => c.NomeUsuario == login.NomeUsuario && c.Email == login.Email);
@@ -236,6 +239,7 @@ namespace senai.twitter.api.Controllers
         [Route("resetarsenha/{Id}")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult ResetarSenha(int Id, [FromBody] Login login)
         {
             var requisicao = _requisicaoAlterarSenhaRepository.BuscarPorId(Id);
@@ -324,6 +328,7 @@ namespace senai.twitter.api.Controllers
         [Route("historico/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Historico(int Id)
         {
             var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
@@ -448,6 +453,7 @@ namespace senai.twitter.api.Controllers
         [Route("todos")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Buscar()
         {
             try {
@@ -507,6 +513,7 @@ namespace senai.twitter.api.Controllers
         [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult BuscarPorId(int Id)
         {
             var login = _loginRepository.BuscarPorId(Id, new string[]{"Perfil"});
@@ -547,6 +554,7 @@ namespace senai.twitter.api.Controllers
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult Cadastrar([FromBody] Login login)
         {
             if (!ModelState.IsValid)
@@ -608,6 +616,7 @@ namespace senai.twitter.api.Controllers
         [Route("atualizar")]
         [HttpPut]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Atualizar([FromBody] Login login)
         {
             if (!ModelState.IsValid)

@@ -75,6 +75,7 @@ namespace senai.twitter.api.Controllers
         [Route("todos")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult Buscar()
         {
             try
@@ -138,6 +139,7 @@ namespace senai.twitter.api.Controllers
         [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult BuscarPorId(int Id)
         {
                 var avaliacoes = _avaliacaoRepository.Listar(new string[]{"RotaRealizada"}).Where(c => c.IdLogin == Id);
@@ -170,6 +172,7 @@ namespace senai.twitter.api.Controllers
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Cadastrar([FromBody] Avaliacao avaliacao)
         {
             if(!ModelState.IsValid)
@@ -214,6 +217,7 @@ namespace senai.twitter.api.Controllers
         [Route("atualizar")]
         [HttpPut]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Atualizar([FromBody] Avaliacao avaliacao)
         {
             if(!ModelState.IsValid)
@@ -260,8 +264,8 @@ namespace senai.twitter.api.Controllers
         /// <response code="400"> Ocorreu um erro.</response>
         [Route("graficos")]
         [HttpGet]
-        [AllowAnonymous]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult Graficos()
         {
             try 
