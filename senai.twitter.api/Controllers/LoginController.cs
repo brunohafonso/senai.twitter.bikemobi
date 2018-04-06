@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -100,6 +101,7 @@ namespace senai.twitter.api.Controllers
         [Route("login")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult Logar([FromBody] Login login, [FromServices] SigningConfigurations signingConfigurations, [FromServices] TokenConfigurations tokenConfigurations)
         {
             Login log = _loginRepository.Listar().FirstOrDefault(c => (c.Email == login.Email || c.NomeUsuario == login.NomeUsuario) && c.Senha == EncriptarSenha(login.Senha));
@@ -174,6 +176,7 @@ namespace senai.twitter.api.Controllers
         [Route("esqueciminhasenha")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult SolicitarResetSenha([FromBody] Login login)
         {
             Login log = _loginRepository.Listar().FirstOrDefault(c => c.NomeUsuario == login.NomeUsuario && c.Email == login.Email);
@@ -236,6 +239,7 @@ namespace senai.twitter.api.Controllers
         [Route("resetarsenha/{Id}")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult ResetarSenha(int Id, [FromBody] Login login)
         {
             var requisicao = _requisicaoAlterarSenhaRepository.BuscarPorId(Id);
@@ -309,10 +313,42 @@ namespace senai.twitter.api.Controllers
         ///         "ultimaAtualizacaoPerfil": "2018-03-26T17:52:16.0957272",
         ///         "rotaPesquisadas": 0,
         ///         "dataUltimaPesquisa": "26/03/2018 15:41:05",
+        ///         "ultimaPesquisa": {
+        ///             "id": 0,
+        ///             "idLogin": 0,
+        ///             "origemEnd": "string",
+        ///             "origemLat": 0,
+        ///             "origemLng": 0,
+        ///             "destinoEnd": "string",
+        ///             "destinoLat": 0,
+        ///             "destinoLng": 0,
+        ///             "polylinePoints": "string",
+        ///             "duracao": "string",
+        ///             "distancia": 0
+        ///         },
         ///         "qtdRotasRealizadas": 0,
         ///         "dataUltimaRotaRealizada": "26/03/2018 15:41:06",
+        ///         "ultimaRotaRealizada": {
+        ///             "id": 0,
+        ///             "idLogin": 0,
+        ///             "idRotaPesquisada": 0,
+        ///             "latInicio": 0,
+        ///             "lngInicio": 0,
+        ///             "latFim": 0,
+        ///             "lngFim": 0,
+        ///             "kilometros": 0,
+        ///             "duracaoInt": 0,
+        ///             "duracaoString": "string"
+        ///         },
         ///         "qtdAvaliacoes": 0,
         ///         "dataUltimaAvaliacao": "26/03/2018 12:24:17",
+        ///         "ultimaAvaliacao": {
+        ///             "id": 0,
+        ///             "idLogin": 0,
+        ///             "idRotaRealizada": 0,
+        ///             "avSeguranca": 0,
+        ///             "avTrajeto": 0
+        ///         },
         ///         "tempoUsoApp": "string"
         ///     }
         /// 
@@ -324,6 +360,7 @@ namespace senai.twitter.api.Controllers
         [Route("historico/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        //[Authorize("Bearer")]
         public IActionResult Historico(int Id)
         {
             var usuario =  _loginRepository.BuscarPorId(Id, new string[]{"Perfil","RotasPesquisadas","RotasRealizadas","Avaliacoes"});
@@ -332,6 +369,7 @@ namespace senai.twitter.api.Controllers
                 var rotasPesquisadas = usuario.RotasPesquisadas;
                 var qtdRotasPesquisadas = 0;
                 var dtUltimaPesquisa = "";
+                object ultimaPesquisa = null;
 
                 if(rotasPesquisadas.Count() < 1) 
                 {
@@ -341,11 +379,13 @@ namespace senai.twitter.api.Controllers
                 {
                     qtdRotasPesquisadas = rotasPesquisadas.Count();
                     dtUltimaPesquisa = rotasPesquisadas.Last().CriadoEm.ToString();
+                    ultimaPesquisa = rotasPesquisadas.Select(x => new {x.Id, x.IdLogin, x.OrigemEnd, x.OrigemLat, x.OrigemLng, x.DestinoEnd, x.DestinoLat, x.DestinoLng, x.PolylinePoints, x.Duracao, x.Distancia}).Last();
                 }
 
                 var rotasRealizadas = usuario.RotasRealizadas;
                 var QtdRotasRealizadas = 0;
                 var dataUltimaRotaRealizada = "";
+                object ultimaRotaRealizada = null;
 
                 if(rotasRealizadas.Count() < 1) 
                 {
@@ -355,11 +395,13 @@ namespace senai.twitter.api.Controllers
                 {
                     QtdRotasRealizadas = rotasRealizadas.Count();
                     dataUltimaRotaRealizada = rotasRealizadas.Last().CriadoEm.ToString();
+                    ultimaRotaRealizada = rotasRealizadas.Select(x => new {x.Id, x.IdLogin, x.IdRotaPesquisada, x.LatInicio, x.LngInicio, x.LatFim, x.LngFim, x.Kilometros, x.DuracaoInt, x.DuracaoString}).Last();
                 }
 
                 var avaliacoes = usuario.Avaliacoes;
                 var QtdAvaliacoes = 0;
                 var dataUltimaAvaliacao = "";
+                object ultimaAvaliacao = null;
 
                 if(avaliacoes.Count() < 1) 
                 {
@@ -369,9 +411,11 @@ namespace senai.twitter.api.Controllers
                 {
                     QtdAvaliacoes = avaliacoes.Count();
                     dataUltimaAvaliacao = avaliacoes.Last().CriadoEm.ToString();
+                    ultimaAvaliacao = avaliacoes.Select(x => new {x.Id, x.IdLogin, x.IdRotaRealizada, x.AvSeguranca, x.AvTrajeto}).Last();
                 }
 
-                long tempoTrajetos = 0;
+                string tempoUsoApp = "Nenhuma rota realizada utilizando o aplicativo.";
+                double tempoTrajetos = 0;
 
                 if(rotasRealizadas.Count() > 0) 
                 {
@@ -381,6 +425,40 @@ namespace senai.twitter.api.Controllers
                     }
                 }
                 
+                double calc = Math.Floor(tempoTrajetos / 60 / 60);
+
+                if(tempoTrajetos > 0)
+                {
+                    if((tempoTrajetos / 60 ) < 60) 
+                    {
+                        tempoUsoApp = $"{tempoTrajetos / 60} minutos.";
+                    } 
+                    else if((tempoTrajetos / 60 / 60) == 1)
+                    {
+                         tempoUsoApp = $"{tempoTrajetos / 60 / 60} hora.";                      
+                    } 
+                    else if((tempoTrajetos / 60 / 60) > 1)
+                    {
+                        if((tempoTrajetos / 60 / 60) - calc != 0 && calc == 1) 
+                        {
+                            var result = (tempoTrajetos / 60 / 60) - calc;
+                            tempoUsoApp = $"{Math.Floor(tempoTrajetos / 60 / 60)} hora e {Convert.ToInt32(result * 60)} minutos.";
+                        }
+                        else
+                        {
+                            if((tempoTrajetos / 60 / 60) - calc != 0) 
+                            {
+                                var result = (tempoTrajetos / 60 / 60) - calc;
+                                tempoUsoApp = $"{Math.Floor(tempoTrajetos / 60 / 60)} horas e {Convert.ToInt32(result * 60)} minutos.";
+                            }
+                            else 
+                            {
+                                tempoUsoApp = $"{tempoTrajetos / 60 / 60} horas.";
+                            }
+                        }
+                    }
+                }
+
                 var retorno = new {
                     QtdAtualizacoesLogin = usuario.QtdAtualizacoes,
                     ultimaAtualizacaoLogin = usuario.AtualizadoEm,
@@ -388,11 +466,14 @@ namespace senai.twitter.api.Controllers
                     ultimaAtualizacaoPerfil = usuario.Perfil.AtualizadoEm,
                     rotaPesquisadas = qtdRotasPesquisadas,
                     dataUltimaPesquisa = dtUltimaPesquisa,
+                    ultimaPesquisa = ultimaPesquisa,
                     QtdRotasRealizadas = QtdRotasRealizadas,
                     dataUltimaRotaRealizada = dataUltimaRotaRealizada,
+                    ultimaRotaRealizada = ultimaRotaRealizada,
                     QtdAvaliacoes = QtdAvaliacoes,
                     dataUltimaAvaliacao = dataUltimaAvaliacao,
-                    tempoUsoApp = (tempoTrajetos / 60) + " mins"
+                    ultimaAvaliacao = ultimaAvaliacao,
+                    tempoUsoApp = tempoUsoApp
                 };
 
                 return Ok(retorno);
@@ -448,6 +529,7 @@ namespace senai.twitter.api.Controllers
         [Route("todos")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Buscar()
         {
             try {
@@ -500,13 +582,14 @@ namespace senai.twitter.api.Controllers
         ///     }
         /// 
         /// </remarks> 
-        /// <param name="Id">Id do login a ser buscado.</param>
+        /// <param name="Id">Id do logihi\n a ser buscado.</param>
         /// <returns>Objeto login com o Id pesquisado.</returns>
         /// <response code="200"> Retorna login buscado através do Id.</response>
         /// <response code="404"> Nenhum login com Id buscado cadastrado.</response>
         [Route("buscarid/{Id}")]
         [HttpGet]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult BuscarPorId(int Id)
         {
             var login = _loginRepository.BuscarPorId(Id, new string[]{"Perfil"});
@@ -547,6 +630,7 @@ namespace senai.twitter.api.Controllers
         [Route("cadastrar")]
         [HttpPost]
         [EnableCors("AllowAnyOrigin")]
+        [AllowAnonymous]
         public IActionResult Cadastrar([FromBody] Login login)
         {
             if (!ModelState.IsValid)
@@ -608,6 +692,7 @@ namespace senai.twitter.api.Controllers
         [Route("atualizar")]
         [HttpPut]
         [EnableCors("AllowAnyOrigin")]
+        [Authorize("Bearer")]
         public IActionResult Atualizar([FromBody] Login login)
         {
             if (!ModelState.IsValid)
