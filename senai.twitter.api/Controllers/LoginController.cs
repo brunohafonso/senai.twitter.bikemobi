@@ -21,7 +21,7 @@ namespace senai.twitter.api.Controllers
     public class LoginController : Controller
     {
         
-        public string Dominio = "http://brunohafonso-001-site1.ctempurl.com/";
+        public string Dominio = "http://bikemobi.herokuapp.com/";
         private readonly TokenConfigurations _tokenOptions;
         private IBaseRepository<Login> _loginRepository;
         private IBaseRepository<Perfil> _perfilRepository;
@@ -63,7 +63,7 @@ namespace senai.twitter.api.Controllers
         
         public static void EnviarEmail(Login login, string assunto, string mensagem, string htmlmensagem)
         {
-            var client = new SendGridClient("");
+            var client = new SendGridClient("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");
             var from = new EmailAddress("brunohafonso@gmail.com", "BikeMobi Support");
             var subject = assunto;
             var to = new EmailAddress(login.Email, login.NomeUsuario);
@@ -201,7 +201,7 @@ namespace senai.twitter.api.Controllers
                         }
 
 
-                    string link = Dominio + $"api/cadastro/resetarsenha/{requisicao.Id}";
+                    string link = Dominio + $"resetarsenha/{requisicao.Id}";
 
                     string mensagem = $"Olá, {log.NomeUsuario}, Pronto para escolher sua senha? \n Refefinir Senha \n (Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)";
                     string htmlmensagem = $@"<div style='font-family: Helvetica,Arial,sans-serif; max-width: 650px; margin: auto;'><img width='212px' height='72px' src='http://bike-mobi.herokuapp.com/static/media/logoBikeMobi.9f5f6ad8.png'/><h1>Olá, {log.NomeUsuario}, Pronto para escolher sua senha?</h1> <a style='cursor: pointer; text-align: center; border-radius: 4px; background-color: #5db8fc; text-decoration: none; font-size: 25px; font-weight: bold; color: #fff; width: 400px; margin: auto; padding: 5px 10px' href={link}>Redefinir Senha</a><h2>(Lembre-se: Você tem 30 minutos para escolher a senha. Após esse período, será necessário solicitar outra redefinição de senha.)</h2></div>";
@@ -257,11 +257,11 @@ namespace senai.twitter.api.Controllers
                         requisicao.AtualizadoPor = _loginRepository.BuscarPorId(requisicao.IdLogin).NomeUsuario;
                         requisicao.QtdAtualizacoes = requisicao.QtdAtualizacoes + 1; 
                         _requisicaoAlterarSenhaRepository.Atualizar(requisicao);
-                        return Ok("Requisição de alteração de senha expirada.");
+                        return BadRequest("Requisição de alteração de senha expirada.");
                     }
                     else
                     {
-                        return Ok("Requisição de alteração de senha expirada.");
+                        return BadRequest("Requisição de alteração de senha expirada.");
                     }
                 }
                 catch(Exception ex)
